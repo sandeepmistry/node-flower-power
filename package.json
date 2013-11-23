@@ -1,5 +1,5 @@
 {
-  "name": "power-flower",
+  "name": "flower-power",
   "version": "0.0.0",
   "description": "node.js lib for the Parrot Flower Power",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sandeepmistry/node-power-flower.git"
+    "url": "https://github.com/sandeepmistry/node-flower-power.git"
   },
   "keywords": [
     "Parrot",
@@ -19,7 +19,7 @@
   "author": "Sandeep Mistry <sandeep.mistry@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sandeepmistry/node-power-flower/issues"
+    "url": "https://github.com/sandeepmistry/node-flower-power/issues"
   },
   "devDependencies": {
     "jshint": "~2.3.0",
