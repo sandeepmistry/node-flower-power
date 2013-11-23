@@ -22,6 +22,10 @@
     "url": "https://github.com/sandeepmistry/node-power-flower/issues"
   },
   "devDependencies": {
-    "jshint": "~2.3.0"
+    "jshint": "~2.3.0",
+    "async": "~0.2.9"
+  },
+  "dependencies": {
+    "noble": "~0.2.4"
   }
 }
