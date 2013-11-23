@@ -14,6 +14,10 @@ FlowerPower.discover(function(flowerPower) {
       flowerPower.connect(callback);
     },
     function(callback) {
+      console.log('discoverServicesAndCharacteristics');
+      flowerPower.discoverServicesAndCharacteristics(callback);
+    },
+    function(callback) {
       console.log('disconnect');
       flowerPower.disconnect(callback);
     }

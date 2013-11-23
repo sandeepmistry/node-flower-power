@@ -28,7 +28,7 @@ FlowerPower.discover = function(callback) {
 
         var flowerPower = new FlowerPower(peripheral);
 
-        callback(peripheral);
+        callback(flowerPower);
       };
 
       noble.on('discover', onDiscover);
@@ -46,7 +46,6 @@ FlowerPower.prototype.onDisconnect = function() {
   this.emit('disconnect');
 };
 
-
 FlowerPower.prototype.toString = function() {
   return JSON.stringify({
     uuid: this.uuid,
@@ -60,6 +59,25 @@ FlowerPower.prototype.connect = function(callback) {
 
 FlowerPower.prototype.disconnect = function(callback) {
   this._peripheral.disconnect(callback);
+};
+
+FlowerPower.prototype.discoverServicesAndCharacteristics = function(callback) {
+  this._peripheral.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
+    if (error === null) {
+      for (var i in services) {
+        var service = services[i];
+        this._services[service.uuid] = service;
+      }
+
+      for (var j in characteristics) {
+          var characteristic = characteristics[j];
+
+          this._characteristics[characteristic.uuid] = characteristic;
+        }
+    }
+
+    callback();
+  }.bind(this));
 };
 
 module.exports = FlowerPower;
