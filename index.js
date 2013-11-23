@@ -70,13 +70,13 @@ FlowerPower.prototype.discoverServicesAndCharacteristics = function(callback) {
       }
 
       for (var j in characteristics) {
-          var characteristic = characteristics[j];
+        var characteristic = characteristics[j];
 
-          this._characteristics[characteristic.uuid] = characteristic;
-        }
+        this._characteristics[characteristic.uuid] = characteristic;
+      }
     }
 
-    callback();
+    callback(error);
   }.bind(this));
 };
 
