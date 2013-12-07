@@ -13,6 +13,11 @@ var HARDWARE_REVISION_UUID                  = '2a27';
 var BATTERY_LEVEL_UUID                      = '2a19';
 
 var LIVE_MODE_UUID                          = '39e1fa0684a811e2afba0002a5d5c51b';
+var SUNLIGHT_UUID                           = '39e1fa0184a811e2afba0002a5d5c51b';
+var TEMPERATURE_UUID                        = '39e1fa0484a811e2afba0002a5d5c51b';
+var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b';
+
+var SUNLIGHT_VALUE_MAPPER                   = require('./data/sunlight.json');
 
 function FlowerPower(peripheral) {
   this._peripheral = peripheral;
@@ -152,12 +157,45 @@ FlowerPower.prototype.readBatteryLevel = function(callback) {
   });
 };
 
+FlowerPower.prototype.onSunlightChange = function(data) {
+  var value = Math.round(data.readUInt16LE(0) / 10.0) * 10; // only have 10% of mapping data
+
+    if (value < 0) {
+      value = 0;
+    } else if (value > 65530) {
+      value = 65530
+    }
+
+    var sunlight = SUNLIGHT_VALUE_MAPPER[value];
+
+    this.emit('sunlightChange', sunlight);
+};
+
+FlowerPower.prototype.notifySunlight = function(callback) {
+  this.notifyCharacteristic(SUNLIGHT_UUID, true, this.onSunlightChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifySunlight = function(callback) {
+  this.notifyCharacteristic(SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
+};
+
 FlowerPower.prototype.enableLiveMode = function(callback) {
-  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), function() {
+    this.notifySunlight(callback);
+  }.bind(this));
 };
 
 FlowerPower.prototype.disableLiveMode = function(callback) {
-  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), callback);
+  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), function() {
+    this.unnotifySunlight(callback);
+  }.bind(this));
 };
+
+// FlowerPower.prototype.readSunlight = function(callback) {
+//   this.readDataCharacteristic(SUNLIGHT_UUID, function(data) {
+    
+//     callback(value);
+//   });
+// };
 
 module.exports = FlowerPower;

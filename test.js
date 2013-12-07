@@ -10,6 +10,10 @@ FlowerPower.discover(function(flowerPower) {
         process.exit(0);
       });
 
+      flowerPower.on('sunlightChange', function(sunlight) {
+        console.log('sunlight = ' + sunlight.toFixed(2));
+      });
+
       console.log('connect');
       flowerPower.connect(callback);
     },
@@ -56,6 +60,10 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('enableLiveMode');
       flowerPower.enableLiveMode(callback);
+    },
+    function(callback) {
+      console.log('live mode');
+      setTimeout(callback, 5000);
     },
     function(callback) {
       console.log('disableLiveMode');
