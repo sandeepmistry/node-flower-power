@@ -18,6 +18,10 @@ FlowerPower.discover(function(flowerPower) {
         console.log('temperature = ' + temperatureC + '°C, ' + temperatureF + '°F');
       });
 
+      flowerPower.on('soilMoistureChange', function(soilMoisture) {
+        console.log('soil moisture = ' + soilMoisture + '%');
+      });
+
       console.log('connect');
       flowerPower.connect(callback);
     },

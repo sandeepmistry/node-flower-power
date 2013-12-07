@@ -19,6 +19,7 @@ var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b'
 
 var SUNLIGHT_VALUE_MAPPER                   = require('./data/sunlight.json');
 var TEMPERATURE_VALUE_MAPPER                = require('./data/temperature.json');
+var SOIL_MOISTURE_VALUE_MAPPER              = require('./data/soil-moisture.json');
 
 function FlowerPower(peripheral) {
   this._peripheral = peripheral;
@@ -203,10 +204,34 @@ FlowerPower.prototype.unnotifyTemperature = function(callback) {
   this.notifyCharacteristic(TEMPERATURE_UUID, false, this.onTemperatureChange.bind(this), callback);
 };
 
+FlowerPower.prototype.onSoilMoistureChange = function(data) {
+  var value = data.readUInt16LE(0);
+
+    if (value < 210) {
+      value = 210;
+    } else if (value > 700) {
+      value = 700;
+    }
+
+    var soilMoisture = SOIL_MOISTURE_VALUE_MAPPER[value];
+
+    this.emit('soilMoistureChange', soilMoisture);
+};
+
+FlowerPower.prototype.notifySoilMoisture = function(callback) {
+  this.notifyCharacteristic(SOIL_MOISTURE_UUID, true, this.onSoilMoistureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
+  this.notifyCharacteristic(SOIL_MOISTURE_UUID, false, this.onSoilMoistureChange.bind(this), callback);
+};
+
 FlowerPower.prototype.enableLiveMode = function(callback) {
   this.notifySunlight(function() {
     this.notifyTemperature(function() {
-      this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+      this.notifySoilMoisture(function() {
+        this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+      }.bind(this));
     }.bind(this));
   }.bind(this));
 };
@@ -215,7 +240,9 @@ FlowerPower.prototype.disableLiveMode = function(callback) {
   this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), function() {
     this.unnotifySunlight(function() {
       this.unnotifyTemperature(function() {
-        callback();
+        this.unnotifySoilMoisture(function() {
+          callback();
+        }.bind(this));
       }.bind(this));
     }.bind(this));
   }.bind(this));
