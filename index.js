@@ -159,18 +159,32 @@ FlowerPower.prototype.readBatteryLevel = function(callback) {
   });
 };
 
-FlowerPower.prototype.onSunlightChange = function(data) {
+FlowerPower.prototype.convertSunlightData = function(data) {
   var value = Math.round(data.readUInt16LE(0) / 10.0) * 10; // only have 10% of mapping data
 
-    if (value < 0) {
-      value = 0;
-    } else if (value > 65530) {
-      value = 65530;
-    }
+  if (value < 0) {
+    value = 0;
+  } else if (value > 65530) {
+    value = 65530;
+  }
 
-    var sunlight = SUNLIGHT_VALUE_MAPPER[value];
+  var sunlight = SUNLIGHT_VALUE_MAPPER[value];
 
-    this.emit('sunlightChange', sunlight);
+  return sunlight;
+};
+
+FlowerPower.prototype.readSunlight = function(callback) {
+  this.readDataCharacteristic(SUNLIGHT_UUID, function(data) {
+    var sunlight = this.convertSunlightData(data);
+
+    callback(sunlight);
+  }.bind(this));
+};
+
+FlowerPower.prototype.onSunlightChange = function(data) {
+  var sunlight = this.convertSunlightData(data);
+
+  this.emit('sunlightChange', sunlight);
 };
 
 FlowerPower.prototype.notifySunlight = function(callback) {

@@ -66,6 +66,14 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
+      console.log('readSunlight');
+      flowerPower.readSunlight(function(sunlight) {
+        console.log('sunlight = ' + sunlight.toFixed(2));
+
+        callback();
+      });
+    },
+    function(callback) {
       console.log('enableLiveMode');
       flowerPower.enableLiveMode(callback);
     },
