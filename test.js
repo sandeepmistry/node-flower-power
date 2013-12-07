@@ -82,6 +82,14 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
+      console.log('readSoilMoisture');
+      flowerPower.readSoilMoisture(function(soilMoisture) {
+        console.log('soil moisture = ' + soilMoisture + '%');
+
+        callback();
+      });
+    },
+    function(callback) {
       console.log('enableLiveMode');
       flowerPower.enableLiveMode(callback);
     },

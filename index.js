@@ -235,18 +235,33 @@ FlowerPower.prototype.unnotifyTemperature = function(callback) {
   this.notifyCharacteristic(TEMPERATURE_UUID, false, this.onTemperatureChange.bind(this), callback);
 };
 
-FlowerPower.prototype.onSoilMoistureChange = function(data) {
+
+FlowerPower.prototype.convertSoilMoistureData = function(data) {
   var value = data.readUInt16LE(0);
 
-    if (value < 210) {
-      value = 210;
-    } else if (value > 700) {
-      value = 700;
-    }
+  if (value < 210) {
+    value = 210;
+  } else if (value > 700) {
+    value = 700;
+  }
 
-    var soilMoisture = SOIL_MOISTURE_VALUE_MAPPER[value];
+  var soilMoisture = SOIL_MOISTURE_VALUE_MAPPER[value];
 
-    this.emit('soilMoistureChange', soilMoisture);
+  return soilMoisture;
+};
+
+FlowerPower.prototype.readSoilMoisture = function(callback) {
+  this.readDataCharacteristic(SOIL_MOISTURE_UUID, function(data) {
+    var soilMoisture = this.convertSoilMoistureData(data);
+
+    callback(soilMoisture);
+  }.bind(this));
+};
+
+FlowerPower.prototype.onSoilMoistureChange = function(data) {
+  var soilMoisture = this.convertSoilMoistureData(data);
+
+  this.emit('soilMoistureChange', soilMoisture);
 };
 
 FlowerPower.prototype.notifySoilMoisture = function(callback) {
