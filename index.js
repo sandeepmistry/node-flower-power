@@ -195,19 +195,36 @@ FlowerPower.prototype.unnotifySunlight = function(callback) {
   this.notifyCharacteristic(SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
 };
 
-FlowerPower.prototype.onTemperatureChange = function(data) {
+FlowerPower.prototype.convertTemperatureData = function(data) {
   var value = data.readUInt16LE(0);
 
-    if (value < 210) {
-      value = 210;
-    } else if (value > 1372) {
-      value = 1372;
-    }
+  if (value < 210) {
+    value = 210;
+  } else if (value > 1372) {
+    value = 1372;
+  }
 
-    var temperatureC = TEMPERATURE_VALUE_MAPPER.C[value];
-    var temperatureF = TEMPERATURE_VALUE_MAPPER.F[value];
+  var temperatureC = TEMPERATURE_VALUE_MAPPER.C[value];
+  var temperatureF = TEMPERATURE_VALUE_MAPPER.F[value];
 
-    this.emit('temperatureChange', temperatureC, temperatureF);
+  return {
+    C: temperatureC,
+    F: temperatureF
+  };
+};
+
+FlowerPower.prototype.readTemperature = function(callback) {
+  this.readDataCharacteristic(TEMPERATURE_UUID, function(data) {
+    var temperature = this.convertTemperatureData(data);
+
+    callback(temperature.C, temperature.F);
+  }.bind(this));
+};
+
+FlowerPower.prototype.onTemperatureChange = function(data) {
+  var temperature = this.convertTemperatureData(data);
+
+  this.emit('temperatureChange', temperature.C, temperature.F);
 };
 
 FlowerPower.prototype.notifyTemperature = function(callback) {

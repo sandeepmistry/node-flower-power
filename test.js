@@ -74,6 +74,14 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
+      console.log('readTemperature');
+      flowerPower.readTemperature(function(temperatureC, temperatureF) {
+        console.log('temperature = ' + temperatureC + '°C, ' + temperatureF + '°F');
+
+        callback();
+      });
+    },
+    function(callback) {
       console.log('enableLiveMode');
       flowerPower.enableLiveMode(callback);
     },
