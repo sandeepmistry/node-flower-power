@@ -54,6 +54,14 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
+      console.log('enableLiveMode');
+      flowerPower.enableLiveMode(callback);
+    },
+    function(callback) {
+      console.log('disableLiveMode');
+      flowerPower.disableLiveMode(callback);
+    },
+    function(callback) {
       console.log('disconnect');
       flowerPower.disconnect(callback);
     }

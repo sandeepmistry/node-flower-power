@@ -12,6 +12,8 @@ var HARDWARE_REVISION_UUID                  = '2a27';
 
 var BATTERY_LEVEL_UUID                      = '2a19';
 
+var LIVE_MODE_UUID                          = '39e1fa0684a811e2afba0002a5d5c51b';
+
 function FlowerPower(peripheral) {
   this._peripheral = peripheral;
   this._services = {};
@@ -87,7 +89,7 @@ FlowerPower.prototype.discoverServicesAndCharacteristics = function(callback) {
   }.bind(this));
 };
 
-FlowerPower.prototype.writeCharacteristic = function(uuid, data, callback) {
+FlowerPower.prototype.writeDataCharacteristic = function(uuid, data, callback) {
   this._characteristics[uuid].write(data, false, callback);
 };
 
@@ -148,6 +150,14 @@ FlowerPower.prototype.readBatteryLevel = function(callback) {
   this.readDataCharacteristic(BATTERY_LEVEL_UUID, function(data) {
     callback(data.readUInt8(0));
   });
+};
+
+FlowerPower.prototype.enableLiveMode = function(callback) {
+  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+};
+
+FlowerPower.prototype.disableLiveMode = function(callback) {
+  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), callback);
 };
 
 module.exports = FlowerPower;
