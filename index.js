@@ -18,6 +18,7 @@ var TEMPERATURE_UUID                        = '39e1fa0484a811e2afba0002a5d5c51b'
 var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b';
 
 var SUNLIGHT_VALUE_MAPPER                   = require('./data/sunlight.json');
+var TEMPERATURE_VALUE_MAPPER                = require('./data/temperature.json');
 
 function FlowerPower(peripheral) {
   this._peripheral = peripheral;
@@ -163,7 +164,7 @@ FlowerPower.prototype.onSunlightChange = function(data) {
     if (value < 0) {
       value = 0;
     } else if (value > 65530) {
-      value = 65530
+      value = 65530;
     }
 
     var sunlight = SUNLIGHT_VALUE_MAPPER[value];
@@ -179,23 +180,45 @@ FlowerPower.prototype.unnotifySunlight = function(callback) {
   this.notifyCharacteristic(SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
 };
 
+FlowerPower.prototype.onTemperatureChange = function(data) {
+  var value = data.readUInt16LE(0);
+
+    if (value < 210) {
+      value = 210;
+    } else if (value > 1372) {
+      value = 1372;
+    }
+
+    var temperatureC = TEMPERATURE_VALUE_MAPPER.C[value];
+    var temperatureF = TEMPERATURE_VALUE_MAPPER.F[value];
+
+    this.emit('temperatureChange', temperatureC, temperatureF);
+};
+
+FlowerPower.prototype.notifyTemperature = function(callback) {
+  this.notifyCharacteristic(TEMPERATURE_UUID, true, this.onTemperatureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyTemperature = function(callback) {
+  this.notifyCharacteristic(TEMPERATURE_UUID, false, this.onTemperatureChange.bind(this), callback);
+};
+
 FlowerPower.prototype.enableLiveMode = function(callback) {
-  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), function() {
-    this.notifySunlight(callback);
+  this.notifySunlight(function() {
+    this.notifyTemperature(function() {
+      this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+    }.bind(this));
   }.bind(this));
 };
 
 FlowerPower.prototype.disableLiveMode = function(callback) {
   this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), function() {
-    this.unnotifySunlight(callback);
+    this.unnotifySunlight(function() {
+      this.unnotifyTemperature(function() {
+        callback();
+      }.bind(this));
+    }.bind(this));
   }.bind(this));
 };
-
-// FlowerPower.prototype.readSunlight = function(callback) {
-//   this.readDataCharacteristic(SUNLIGHT_UUID, function(data) {
-    
-//     callback(value);
-//   });
-// };
 
 module.exports = FlowerPower;

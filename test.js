@@ -14,6 +14,10 @@ FlowerPower.discover(function(flowerPower) {
         console.log('sunlight = ' + sunlight.toFixed(2));
       });
 
+      flowerPower.on('temperatureChange', function(temperatureC, temperatureF) {
+        console.log('temperature = ' + temperatureC + '°C, ' + temperatureF + '°F');
+      });
+
       console.log('connect');
       flowerPower.connect(callback);
     },
