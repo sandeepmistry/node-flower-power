@@ -12,14 +12,14 @@ FlowerPower.discover(function(peripheral) {
   uuid = peripheral.uuid;
   if (!devices[uuid]) devices[uuid] = { uuid: uuid, name: peripheral.name, props: {}, peripheral: peripheral };
   devices[uuid].state = 'discovered';
-  devices[uuid].lastUpdated = new Date().getTime();
+  devices[uuid].props.lastSample = new Date().getTime();
 
   peripheral.on('disconnect', function() {
     var device;
 
     device = devices[uuid];
     device.state = 'disconnected';
-    device.lastUpdated = new Date().getTime();
+    device.props.lastSample = new Date().getTime();
 
     tsrp(uuid);
   }).connect(onconnect(uuid));
@@ -35,7 +35,7 @@ var didconnect = function(uuid) {
 
   device.state = 'connected';
   device.props.rssi = peripheral._peripheral.rssi;
-  device.lastUpdated = new Date().getTime();
+  device.props.lastSample = new Date().getTime();
 
   peripheral.discoverServicesAndCharacteristics(function() {
     var i = 4;
@@ -50,14 +50,14 @@ var didconnect = function(uuid) {
     peripheral.readBatteryLevel(function(batteryLevel) {
       device.props.batteryLevel = batteryLevel;
       if (--i === 0) return peripheral.disconnect();
-      device.lastUpdated = new Date().getTime();
+      device.props.lastSample = new Date().getTime();
     });
     peripheral.readSunlight(function(sunlight) {
       // sunlight is PPF (photos per square meter), convert to lux
       // according to http://www.apogeeinstruments.com/conversion-ppf-to-lux/
       device.props.light = sunlight * 54;
       if (--i === 0) return peripheral.disconnect();
-      device.lastUpdated = new Date().getTime();
+      device.props.lastSample = new Date().getTime();
     });
     peripheral.readTemperature(function(temperatureC, temperatureF) {/* jshint unused: false */
       var antoine;
@@ -67,13 +67,13 @@ var didconnect = function(uuid) {
       device.props.temperature = temperatureC;
       device.lastPressure = Math.pow(10, antoine - 2);
       if (--i === 0) return peripheral.disconnect();
-      device.lastUpdated = new Date().getTime();
+      device.props.lastSample = new Date().getTime();
     });
     peripheral.readSoilMoisture(function(relativeHumidity) {
       // moisture = relativeHumidity * (saturationVaporPressure(temperatureC) / 100);
       if (device.lastPressure) device.props.moisture = relativeHumidity * device.lastPressure;
       if (--i === 0) return peripheral.disconnect();
-      device.lastUpdated = new Date().getTime();
+      device.props.lastSample = new Date().getTime();
     });
   });
 };
@@ -203,7 +203,6 @@ var tsrp = function(uuid) {
                    , 'udn'                         : 'uuid:' + device.uuid
                    }
                  , info                            : device.props
-                 , lastUpdated                     : device.lastUpdated
                  }
                ]
              }
