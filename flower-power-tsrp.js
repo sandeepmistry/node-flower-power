@@ -26,12 +26,14 @@ FlowerPower.discover(function(peripheral) {
 });
 
 var onconnect = function(uuid) {
-  return function() { didconnect(uuid); };
+  return function(err) { didconnect(err, uuid); };
 };
 
-var didconnect = function(uuid) {
+var didconnect = function(err, uuid) {
   var device     = devices[uuid]
     , peripheral = device.peripheral;
+
+  if (!!err) return console.log(device.name + ': ' + err.message);
 
   device.state = 'connected';
   device.props.rssi = peripheral._peripheral.rssi;
@@ -83,7 +85,9 @@ setInterval(function() {
 
   now = new Date().getTime();
   for (uuid in devices) {
-    if ((!devices.hasOwnProperty(uuid)) || (devices[uuid].state !== 'disconnected') || (!!devices[uuid].remote)) continue;
+    if (!devices.hasOwnProperty(uuid)) continue;
+    device = devices[uuid];
+    if ((device.state !== 'disconnected') || (!!device.remote)) continue;
 
     device.peripheral.connect(onconnect(uuid));
   }
@@ -178,7 +182,7 @@ var tsrp = function(uuid) {
   json = { path                                    : '/api/v1/thing/reporting'
          , requestID                               : requestID.toString()
          , things                                  :
-           { '/device/climate/flower-power/sensor' :
+           { '/device/climate/flower-power/plant'  :
              { prototype                           :
                { device                            :
                  { name                            : 'Flower Power'
