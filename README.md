@@ -39,7 +39,7 @@ __Device Info__
 
     flowerPower.readHardwareRevision(callback(hardwareRevision));
 
-__Batter Level__
+__Battery Level__
 
     // batteryLevel range is 0 - 100
     flowerPower.readBatteryLevel(callback(batteryLevel));
