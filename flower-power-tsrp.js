@@ -55,7 +55,7 @@ var didconnect = function(err, uuid) {
       device.props.lastSample = new Date().getTime();
     });
     peripheral.readSunlight(function(sunlight) {
-      // sunlight is PPF (photos per square meter), convert to lux
+      // sunlight is PPF (photons per square meter), convert to lux
       // according to http://www.apogeeinstruments.com/conversion-ppf-to-lux/
       device.props.light = sunlight * 54;
       if (--i === 0) return peripheral.disconnect();

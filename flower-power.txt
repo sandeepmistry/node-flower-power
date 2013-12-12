@@ -157,7 +157,7 @@ Read firmware revision string (uuid 2a26):
 0a0e00
 010a0e000e
 
-value: '2013-09-05_hawaii-1'
+value: '2013-09-05_hawaii-1.0.0_hardware-config-MP'
 
 Read hardware revision string (uuid 2a27):
 ------------------------------------------
@@ -165,7 +165,7 @@ Read hardware revision string (uuid 2a27):
 0a1000
 010a10000e
 
-value: '2013-07-26_hawaiiPr'
+value: '2013-07-26_hawaiiProduction-1.2_protoDV-bootloader'
 
 Read uuid 39e1fe0184a811e2afba0002a5d5c51b:
 -------------------------------------------
