@@ -1,8 +1,6 @@
-var FlowerPower = require('./index')
-  , dgram       = require('dgram')
-  , os          = require('os')
-  ;
-
+var FlowerPower = require('./index');
+var dgram       = require('dgram');
+var os          = require('os');
 
 var devices = {};
 
@@ -30,8 +28,8 @@ var onconnect = function(uuid) {
 };
 
 var didconnect = function(err, uuid) {
-  var device     = devices[uuid]
-    , peripheral = device.peripheral;
+  var device     = devices[uuid];
+  var peripheral = device.peripheral;
 
   if (!!err) return console.log(device.name + ': ' + err.message);
 
@@ -103,11 +101,10 @@ setInterval(function() {
 }, 45 * 1000);
 
 
-var ipaddr    = '224.192.32.20'
-  , portno    = 22601
-  , requestID = Math.round(Math.random() * Math.pow(2, 31)) - 1
-  , socket
-  ;
+var ipaddr    = '224.192.32.20';
+var portno    = 22601;
+var requestID = Math.round(Math.random() * Math.pow(2, 31)) - 1;
+var socket;
 
 var ifApply = function(cb) {
   var ifa, ifaddrs, ifname, ifaces;
@@ -145,8 +142,8 @@ ifApply(function(ifname, ifaddr) {
       if (!thing.instances) continue;
       for (i = 0; i < thing.instances.length; i++) {
         instance = thing.instances[i];
-        if ((!instance.unit) || (!instance.unit.udn) || (instance.unit.udn.indexOf('uuid:') !== 0)
-                || (!instance.info) || (isNaN(instance.info.rssi))) continue;
+        if ((!instance.unit) || (!instance.unit.udn) || (instance.unit.udn.indexOf('uuid:') !== 0) ||
+              (!instance.info) || (isNaN(instance.info.rssi))) continue;
 
         rssi = instance.info.rssi;
         uuid = instance.unit.udn.substring(5);
@@ -179,34 +176,34 @@ var tsrp = function(uuid) {
   var device, json, packet;
 
   device = devices[uuid];
-  json = { path                                    : '/api/v1/thing/reporting'
-         , requestID                               : requestID.toString()
-         , things                                  :
+  json = { path                                    : '/api/v1/thing/reporting',
+           requestID                               : requestID.toString(),
+           things                                  :
            { '/device/climate/flower-power/plant'  :
              { prototype                           :
                { device                            :
-                 { name                            : 'Flower Power'
-                 , maker                           : 'Parrot'
+                 { name                            : 'Flower Power',
+                   maker                           : 'Parrot'
+                 },
+                 name                              : true,
+                 status                            : [ 'recent', 'absent' ],
+                 properties                        :
+                 { 'temperature'                   : 'celsius',
+                   'light'                         : 'lux',
+                   'moisture'                      : 'millibars',
+                   'batteryLevel'                  : 'percentage',
+                   'rssi'                          : 's8'
                  }
-               , name                              : true
-               , status                            : [ 'recent', 'absent' ]
-               , properties                        :
-                 { 'temperature'                   : 'celsius'
-                 , 'light'                         : 'lux'
-                 , 'moisture'                      : 'millibars'
-                 , 'batteryLevel'                  : 'percentage'
-                 , 'rssi'                          : 's8'
-                 }
-               }
-             , instances                           :
+               },
+               instances                           :
                [
-                 { name                            : device.name
-                 , status                          : 'recent'
-                 , unit                            :
-                   { 'serial'                      : device.serialNumber
-                   , 'udn'                         : 'uuid:' + device.uuid
-                   }
-                 , info                            : device.props
+                 { name                            : device.name,
+                   status                          : 'recent',
+                   unit                            :
+                   { 'serial'                      : device.serialNumber,
+                     'udn'                         : 'uuid:' + device.uuid
+                   },
+                   info                            : device.props
                  }
                ]
              }
