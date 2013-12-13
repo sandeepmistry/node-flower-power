@@ -3,6 +3,7 @@ node-flower-power
 
 node.js lib for the [Parrot Flower Power](http://www.parrot.com/flowerpower/usa/)
 
+
 Install
 -------
 
@@ -86,7 +87,7 @@ __Soil Moisture Change__
     flowerPower.on('soilMoistureChange', callback(soilMoisture));
 
 TSRP client
------------
+===========
 Executing:
 
     npm -l install
@@ -128,3 +129,4 @@ TODO
     * soil moisture
     * fertizler
   * __use calculations to convert values__ (currently using lookup table)
+
