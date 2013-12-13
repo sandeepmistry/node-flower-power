@@ -40,15 +40,16 @@ var didconnect = function(err, uuid) {
   device.props.lastSample = new Date().getTime();
 
   peripheral.discoverServicesAndCharacteristics(function() {
-    var i = 4;
+    var i;
 
     if (!device.serialNumber) {
-      peripheral.readSerialNumber(function(serialNumber) {
+      return peripheral.readSerialNumber(function(serialNumber) {
         device.serialNumber = serialNumber;
-        if (--i === 0) return peripheral.disconnect();
+        return peripheral.disconnect();
       });
-      i++;
     }
+
+    i = 4;
     peripheral.readBatteryLevel(function(batteryLevel) {
       device.props.batteryLevel = batteryLevel;
       if (--i === 0) return peripheral.disconnect();
@@ -94,11 +95,18 @@ setInterval(function() {
 }, 60 * 60 * 1000);
 
 setInterval(function() {
-  var now, uuid;
+  var device, now, uuid;
 
   now = new Date().getTime();
   for (uuid in devices) {
-    if ((devices.hasOwnProperty(uuid)) && (devices[uuid].state === 'disconnected') && (!devices[uuid].remote)) tsrp(uuid);
+    if (!devices.hasOwnProperty(uuid)) continue;
+    device = devices[uuid];
+    if ((device.state !== 'disconnected') || (!!device.remote)) continue;
+
+    if (!!device.serialNumber) { tsrp(uuid); continue; }
+
+    console.log('retry serialNumber: ' + uuid + ' (rssi ' + device.props.rssi + ')');
+    device.peripheral.connect(onconnect(uuid));
   }
 }, 45 * 1000);
 
@@ -179,6 +187,8 @@ var tsrp = function(uuid) {
   var device, json, packet;
 
   device = devices[uuid];
+  if (!device.serialNumber) return;
+
   json = { path                                    : '/api/v1/thing/reporting'
          , requestID                               : requestID.toString()
          , things                                  :
