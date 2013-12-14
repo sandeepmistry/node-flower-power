@@ -17,6 +17,9 @@ var SUNLIGHT_UUID                           = '39e1fa0184a811e2afba0002a5d5c51b'
 var TEMPERATURE_UUID                        = '39e1fa0484a811e2afba0002a5d5c51b';
 var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b';
 
+var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
+var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
+
 var SUNLIGHT_VALUE_MAPPER                   = require('./data/sunlight.json');
 var TEMPERATURE_VALUE_MAPPER                = require('./data/temperature.json');
 var SOIL_MOISTURE_VALUE_MAPPER              = require('./data/soil-moisture.json');
@@ -157,6 +160,36 @@ FlowerPower.prototype.readBatteryLevel = function(callback) {
   this.readDataCharacteristic(BATTERY_LEVEL_UUID, function(data) {
     callback(data.readUInt8(0));
   });
+};
+
+FlowerPower.prototype.readFriendlyName = function(callback) {
+  this.readStringCharacteristic(FRIENDLY_NAME_UUID, callback);
+};
+
+FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
+  var data = new Buffer('00000000000000000000000000000000000000', 'hex');
+
+  for (var i = 0; (i < friendlyName.length) && (i < data.length); i++) {
+    data[i] = friendlyName[i];
+  }
+
+  this.writeDataCharacteristic(FRIENDLY_NAME_UUID, data, callback);
+};
+
+FlowerPower.prototype.readColor = function(callback) {
+  this.readDataCharacteristic(COLOR_UUID, function(data) {
+    var colorCode = data.readUInt16LE(0);
+
+    var COLOR_CODE_MAPPER = {
+      4: 'brown',
+      6: 'green',
+      7: 'blue'
+    };
+
+    var color = COLOR_CODE_MAPPER[colorCode] || 'unknown';
+
+    callback(color);
+  }.bind(this));
 };
 
 FlowerPower.prototype.convertSunlightData = function(data) {

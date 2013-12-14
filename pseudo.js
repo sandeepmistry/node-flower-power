@@ -252,12 +252,12 @@ bleno.on('advertisingStart', function(error) {
             properties: ['read']
           }),
           new BlenoCharacteristic({
-            uuid: '39e1fe0384a811e2afba0002a5d5c51b', // friendly name ???
+            uuid: '39e1fe0384a811e2afba0002a5d5c51b', // friendly name
             properties: ['read','write'],
             value: new Buffer('466c6f77657220706f776572203030303000cc', 'hex')
           }),
           new BlenoCharacteristic({
-            uuid: '39e1fe0484a811e2afba0002a5d5c51b', // color ???
+            uuid: '39e1fe0484a811e2afba0002a5d5c51b', // color
             properties: ['read'],
             value: new Buffer('0700', 'hex')
           })

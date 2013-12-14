@@ -66,6 +66,23 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
+      console.log('readFriendlyName');
+      flowerPower.readFriendlyName(function(friendlyName) {
+        console.log('\tfriendly name = ' + friendlyName);
+
+        console.log('writeFriendlyName');
+        flowerPower.writeFriendlyName(friendlyName, callback);
+      });
+    },
+    function(callback) {
+      console.log('readColor');
+      flowerPower.readColor(function(color) {
+        console.log('\tcolor = ' + color);
+
+        callback();
+      });
+    },
+    function(callback) {
       console.log('readSunlight');
       flowerPower.readSunlight(function(sunlight) {
         console.log('sunlight = ' + sunlight.toFixed(2));

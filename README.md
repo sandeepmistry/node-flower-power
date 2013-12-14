@@ -40,6 +40,15 @@ __Device Info__
 
     flowerPower.readHardwareRevision(callback(hardwareRevision));
 
+__Other Info__
+
+    flowerPower.readFriendlyName(callback(friendlyName)); 
+
+    flowerPower.writeFriendlyName(friendlyName, callback);
+
+
+    flowerPower.readColor(callback(color));
+
 __Battery Level__
 
     // batteryLevel range is 0 - 100

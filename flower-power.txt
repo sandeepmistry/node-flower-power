@@ -175,7 +175,7 @@ Read uuid 39e1fe0184a811e2afba0002a5d5c51b:
 
 value: 00 00 eb 00 e7 02 ff ff ff ff 9e 00 f4 02 62 05 8c 05 fc
 
-Read uuid 39e1fe0384a811e2afba0002a5d5c51b (friendly name ???):
+Read uuid 39e1fe0384a811e2afba0002a5d5c51b (friendly name):
 -----------------------------------------------------------
 
 0a5500
@@ -184,14 +184,17 @@ Read uuid 39e1fe0384a811e2afba0002a5d5c51b (friendly name ???):
 value: 46 6c 6f 77 65 72 20 70 6f 77 65 72 20 38 42 39 38 00 cc
 value: Flower power 8B98
 
-Read uuid 39e1fe0484a811e2afba0002a5d5c51b:
--------------------------------------------
+Read uuid 39e1fe0484a811e2afba0002a5d5c51b (color):
+---------------------------------------------------
 
 0a5700 
 010a57000e
 
 value: 07 00
 
+- 4 => brown
+- 6 => green
+- 7 => blue
 
 ***************************************************************************
 
