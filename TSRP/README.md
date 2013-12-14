@@ -3,6 +3,7 @@ TSRP client
 Executing:
 
     npm -l install
+    cd TSRP
     node flower-power-tsrp.js
 
 will run a script that continuously looks for Flower Power devices,
