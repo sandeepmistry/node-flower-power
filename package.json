@@ -24,7 +24,7 @@
   "devDependencies": {
     "jshint": "~2.3.0",
     "async": "~0.2.9",
-    "bleno": "~0.0.2"
+    "bleno": "~0.0.3"
   },
   "dependencies": {
     "noble": "~0.2.4"
