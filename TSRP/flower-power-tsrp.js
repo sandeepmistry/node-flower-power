@@ -1,6 +1,8 @@
-var FlowerPower = require('./index');
-var dgram       = require('dgram');
-var os          = require('os');
+var FlowerPower = require('../index')
+  , dgram       = require('dgram')
+  , os          = require('os')
+  ;
+
 
 var devices = {};
 
@@ -28,8 +30,8 @@ var onconnect = function(uuid) {
 };
 
 var didconnect = function(err, uuid) {
-  var device     = devices[uuid];
-  var peripheral = device.peripheral;
+  var device     = devices[uuid]
+    , peripheral = device.peripheral;
 
   if (!!err) return console.log(device.name + ': ' + err.message);
 
@@ -38,22 +40,23 @@ var didconnect = function(err, uuid) {
   device.props.lastSample = new Date().getTime();
 
   peripheral.discoverServicesAndCharacteristics(function() {
-    var i = 4;
+    var i;
 
     if (!device.serialNumber) {
-      peripheral.readSerialNumber(function(serialNumber) {
+      return peripheral.readSerialNumber(function(serialNumber) {
         device.serialNumber = serialNumber;
-        if (--i === 0) return peripheral.disconnect();
+        return peripheral.disconnect();
       });
-      i++;
     }
+
+    i = 4;
     peripheral.readBatteryLevel(function(batteryLevel) {
       device.props.batteryLevel = batteryLevel;
       if (--i === 0) return peripheral.disconnect();
       device.props.lastSample = new Date().getTime();
     });
     peripheral.readSunlight(function(sunlight) {
-      // sunlight is PPF (photos per square meter), convert to lux
+      // sunlight is PPF (photons per square meter), convert to lux
       // according to http://www.apogeeinstruments.com/conversion-ppf-to-lux/
       device.props.light = sunlight * 54;
       if (--i === 0) return peripheral.disconnect();
@@ -92,19 +95,27 @@ setInterval(function() {
 }, 60 * 60 * 1000);
 
 setInterval(function() {
-  var now, uuid;
+  var device, now, uuid;
 
   now = new Date().getTime();
   for (uuid in devices) {
-    if ((devices.hasOwnProperty(uuid)) && (devices[uuid].state === 'disconnected') && (!devices[uuid].remote)) tsrp(uuid);
+    if (!devices.hasOwnProperty(uuid)) continue;
+    device = devices[uuid];
+    if ((device.state !== 'disconnected') || (!!device.remote)) continue;
+
+    if (!!device.serialNumber) { tsrp(uuid); continue; }
+
+    console.log('retry serialNumber: ' + uuid + ' (rssi ' + device.props.rssi + ')');
+    device.peripheral.connect(onconnect(uuid));
   }
 }, 45 * 1000);
 
 
-var ipaddr    = '224.192.32.20';
-var portno    = 22601;
-var requestID = Math.round(Math.random() * Math.pow(2, 31)) - 1;
-var socket;
+var ipaddr    = '224.192.32.20'
+  , portno    = 22601
+  , requestID = Math.round(Math.random() * Math.pow(2, 31)) - 1
+  , socket
+  ;
 
 var ifApply = function(cb) {
   var ifa, ifaddrs, ifname, ifaces;
@@ -142,8 +153,8 @@ ifApply(function(ifname, ifaddr) {
       if (!thing.instances) continue;
       for (i = 0; i < thing.instances.length; i++) {
         instance = thing.instances[i];
-        if ((!instance.unit) || (!instance.unit.udn) || (instance.unit.udn.indexOf('uuid:') !== 0) ||
-              (!instance.info) || (isNaN(instance.info.rssi))) continue;
+        if ((!instance.unit) || (!instance.unit.udn) || (instance.unit.udn.indexOf('uuid:') !== 0)
+                || (!instance.info) || (isNaN(instance.info.rssi))) continue;
 
         rssi = instance.info.rssi;
         uuid = instance.unit.udn.substring(5);
@@ -176,34 +187,36 @@ var tsrp = function(uuid) {
   var device, json, packet;
 
   device = devices[uuid];
-  json = { path                                    : '/api/v1/thing/reporting',
-           requestID                               : requestID.toString(),
-           things                                  :
+  if (!device.serialNumber) return;
+
+  json = { path                                    : '/api/v1/thing/reporting'
+         , requestID                               : requestID.toString()
+         , things                                  :
            { '/device/climate/flower-power/plant'  :
              { prototype                           :
                { device                            :
-                 { name                            : 'Flower Power',
-                   maker                           : 'Parrot'
-                 },
-                 name                              : true,
-                 status                            : [ 'recent', 'absent' ],
-                 properties                        :
-                 { 'temperature'                   : 'celsius',
-                   'light'                         : 'lux',
-                   'moisture'                      : 'millibars',
-                   'batteryLevel'                  : 'percentage',
-                   'rssi'                          : 's8'
+                 { name                            : 'Flower Power'
+                 , maker                           : 'Parrot'
                  }
-               },
-               instances                           :
+               , name                              : true
+               , status                            : [ 'recent', 'absent' ]
+               , properties                        :
+                 { 'temperature'                   : 'celsius'
+                 , 'light'                         : 'lux'
+                 , 'moisture'                      : 'millibars'
+                 , 'batteryLevel'                  : 'percentage'
+                 , 'rssi'                          : 's8'
+                 }
+               }
+             , instances                           :
                [
-                 { name                            : device.name,
-                   status                          : 'recent',
-                   unit                            :
-                   { 'serial'                      : device.serialNumber,
-                     'udn'                         : 'uuid:' + device.uuid
-                   },
-                   info                            : device.props
+                 { name                            : device.name
+                 , status                          : 'recent'
+                 , unit                            :
+                   { 'serial'                      : device.serialNumber
+                   , 'udn'                         : 'uuid:' + device.uuid
+                   }
+                 , info                            : device.props
                  }
                ]
              }
