@@ -21,7 +21,7 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
 
 NODE=/usr/local/bin/node
 TSRP_PID=/var/run/flower-power.pid
-TSRP_ARGS="/home/debian/node-flower-power/flower-power-tsrp.js"
+TSRP_ARGS="/home/debian/node-flower-power/TSRP/flower-power-tsrp.js"
 TSRP_FILE="/var/log/flower-power.log"
 PID=
 
