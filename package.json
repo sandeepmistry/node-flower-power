@@ -27,6 +27,6 @@
     "bleno": "~0.0.2"
   },
   "dependencies": {
-    "noble": "~0.2.4"
+ "noble"               : "git://github.com/sandeepmistry/noble.git"
   }
 }
