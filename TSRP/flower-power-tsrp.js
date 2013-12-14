@@ -1,4 +1,4 @@
-var FlowerPower = require('./index')
+var FlowerPower = require('../index')
   , dgram       = require('dgram')
   , os          = require('os')
   ;
