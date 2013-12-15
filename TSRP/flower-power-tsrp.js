@@ -45,7 +45,11 @@ var didconnect = function(err, uuid) {
     if (!device.serialNumber) {
       return peripheral.readSerialNumber(function(serialNumber) {
         device.serialNumber = serialNumber;
-        return peripheral.disconnect();
+        peripheral.readFriendlyName(function(friendlyName) {
+          device.friendlyName = friendlyName;
+
+          return peripheral.disconnect();
+        });
       });
     }
 
@@ -210,7 +214,7 @@ var tsrp = function(uuid) {
                }
              , instances                           :
                [
-                 { name                            : device.name
+                 { name                            : device.friendlyName || device.name
                  , status                          : 'recent'
                  , unit                            :
                    { 'serial'                      : device.serialNumber
