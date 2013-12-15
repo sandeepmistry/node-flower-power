@@ -167,10 +167,11 @@ FlowerPower.prototype.readFriendlyName = function(callback) {
 };
 
 FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
+  var friendlyNameBuffer = new Buffer(friendlyName);
   var data = new Buffer('00000000000000000000000000000000000000', 'hex');
 
-  for (var i = 0; (i < friendlyName.length) && (i < data.length); i++) {
-    data[i] = friendlyName[i];
+  for (var i = 0; (i < friendlyNameBuffer.length) && (i < data.length); i++) {
+    data[i] = friendlyNameBuffer[i];
   }
 
   this.writeDataCharacteristic(FRIENDLY_NAME_UUID, data, callback);
