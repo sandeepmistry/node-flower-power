@@ -20,10 +20,6 @@ var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b'
 var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
 var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
 
-var SUNLIGHT_VALUE_MAPPER                   = require('./data/sunlight.json');
-var TEMPERATURE_VALUE_MAPPER                = require('./data/temperature.json');
-var SOIL_MOISTURE_VALUE_MAPPER              = require('./data/soil-moisture.json');
-
 function FlowerPower(peripheral) {
   this._peripheral = peripheral;
   this._services = {};
@@ -194,15 +190,9 @@ FlowerPower.prototype.readColor = function(callback) {
 };
 
 FlowerPower.prototype.convertSunlightData = function(data) {
-  var value = Math.round(data.readUInt16LE(0) / 10.0) * 10; // only have 10% of mapping data
+  var rawValue = data.readUInt16LE(0) * 1.0;
 
-  if (value < 0) {
-    value = 0;
-  } else if (value > 65530) {
-    value = 65530;
-  }
-
-  var sunlight = SUNLIGHT_VALUE_MAPPER[value];
+  var sunlight = 0.08640000000000001 * (192773.17000000001 * Math.pow(rawValue, -1.0606619));
 
   return sunlight;
 };
@@ -230,35 +220,31 @@ FlowerPower.prototype.unnotifySunlight = function(callback) {
 };
 
 FlowerPower.prototype.convertTemperatureData = function(data) {
-  var value = data.readUInt16LE(0);
+  var rawValue = data.readUInt16LE(0) * 1.0;
 
-  if (value < 210) {
-    value = 210;
-  } else if (value > 1372) {
-    value = 1372;
+  var temperature = 0.00000003044 * Math.pow(rawValue, 3.0) - 0.00008038 * Math.pow(rawValue, 2.0) + rawValue * 0.1149 - 30.449999999999999;
+
+  if (temperature < -10.0) {
+    temperature = -10.0;
+  } else if (temperature > 55.0) {
+    temperature = 55.0;
   }
 
-  var temperatureC = TEMPERATURE_VALUE_MAPPER.C[value];
-  var temperatureF = TEMPERATURE_VALUE_MAPPER.F[value];
-
-  return {
-    C: temperatureC,
-    F: temperatureF
-  };
+  return temperature;
 };
 
 FlowerPower.prototype.readTemperature = function(callback) {
   this.readDataCharacteristic(TEMPERATURE_UUID, function(data) {
     var temperature = this.convertTemperatureData(data);
 
-    callback(temperature.C, temperature.F);
+    callback(temperature);
   }.bind(this));
 };
 
 FlowerPower.prototype.onTemperatureChange = function(data) {
   var temperature = this.convertTemperatureData(data);
 
-  this.emit('temperatureChange', temperature.C, temperature.F);
+  this.emit('temperatureChange', temperature);
 };
 
 FlowerPower.prototype.notifyTemperature = function(callback) {
@@ -271,15 +257,17 @@ FlowerPower.prototype.unnotifyTemperature = function(callback) {
 
 
 FlowerPower.prototype.convertSoilMoistureData = function(data) {
-  var value = data.readUInt16LE(0);
+  var rawValue = data.readUInt16LE(0) * 1.0;
 
-  if (value < 210) {
-    value = 210;
-  } else if (value > 700) {
-    value = 700;
+  var soilMoisture = 11.4293 + (0.0000000010698 * Math.pow(rawValue, 4.0) - 0.00000152538 * Math.pow(rawValue, 3.0) +  0.000866976 * Math.pow(rawValue, 2.0) - 0.169422 * rawValue);
+
+  soilMoisture = 100.0 * (0.0000045 * Math.pow(soilMoisture, 3.0) - 0.00055 * Math.pow(soilMoisture, 2.0) + 0.0292 * soilMoisture - 0.053);
+
+  if (soilMoisture < 0.0) {
+    soilMoisture = 0.0;
+  } else if (soilMoisture > 60.0) {
+    soilMoisture = 60.0;
   }
-
-  var soilMoisture = SOIL_MOISTURE_VALUE_MAPPER[value];
 
   return soilMoisture;
 };

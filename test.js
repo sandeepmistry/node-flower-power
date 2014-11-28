@@ -14,12 +14,12 @@ FlowerPower.discover(function(flowerPower) {
         console.log('sunlight = ' + sunlight.toFixed(2));
       });
 
-      flowerPower.on('temperatureChange', function(temperatureC, temperatureF) {
-        console.log('temperature = ' + temperatureC + '°C, ' + temperatureF + '°F');
+      flowerPower.on('temperatureChange', function(temperature) {
+        console.log('temperature = ' + temperature.toFixed(2) + '°C');
       });
 
       flowerPower.on('soilMoistureChange', function(soilMoisture) {
-        console.log('soil moisture = ' + soilMoisture + '%');
+        console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
       });
 
       console.log('connect');
@@ -92,8 +92,8 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readTemperature');
-      flowerPower.readTemperature(function(temperatureC, temperatureF) {
-        console.log('temperature = ' + temperatureC + '°C, ' + temperatureF + '°F');
+      flowerPower.readTemperature(function(temperature) {
+        console.log('temperature = ' + temperature.toFixed(2) + '°C');
 
         callback();
       });
@@ -101,7 +101,7 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('readSoilMoisture');
       flowerPower.readSoilMoisture(function(soilMoisture) {
-        console.log('soil moisture = ' + soilMoisture + '%');
+        console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
 
         callback();
       });

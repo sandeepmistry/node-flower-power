@@ -44,7 +44,7 @@ __Device Info__
 
 __Other Info__
 
-    flowerPower.readFriendlyName(callback(friendlyName)); 
+    flowerPower.readFriendlyName(callback(friendlyName));
 
     flowerPower.writeFriendlyName(friendlyName, callback);
 
@@ -58,12 +58,12 @@ __Battery Level__
 
 __Sunlight__
 
-    // sunlight units are photons per square meter 
+    // sunlight units are photons per square meter
     flowerPower.readSunlight(callback(sunlight));
 
 __Temperature__
 
-    flowerPower.readTemperature(callback(temperatureC, temperatureF));
+    flowerPower.readTemperature(callback(temperature)); // C
 
 __Soil Moisture__
 
@@ -78,7 +78,7 @@ __Live mode__
 
     flowerPower.disableLiveMode(callback);
 
-Events 
+Events
 ------
 
 __Disconnect__
@@ -91,7 +91,7 @@ __Sunlight Change__
 
 __Temperature Change__
 
-    flowerPower.on('temperatureChange', callback(temperatureC, temperatureF));
+    flowerPower.on('temperatureChange', callback(temperature));
 
 __Soil Moisture Change__
 
@@ -123,5 +123,5 @@ TODO
     * temperature
     * soil moisture
     * fertizler
-  * __use calculations to convert values__ (currently using lookup table)
+  * ~~__use calculations to convert values__ (currently using lookup table)~~
 
