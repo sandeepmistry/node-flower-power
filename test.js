@@ -14,8 +14,12 @@ FlowerPower.discover(function(flowerPower) {
         console.log('sunlight = ' + sunlight.toFixed(2));
       });
 
-      flowerPower.on('temperatureChange', function(temperature) {
-        console.log('temperature = ' + temperature.toFixed(2) + '°C');
+      flowerPower.on('soilTemperatureChange', function(temperature) {
+        console.log('soil temperature = ' + temperature.toFixed(2) + '°C');
+      });
+
+      flowerPower.on('airTemperatureChange', function(temperature) {
+        console.log('air temperature = ' + temperature.toFixed(2) + '°C');
       });
 
       flowerPower.on('soilMoistureChange', function(soilMoisture) {
@@ -91,9 +95,17 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
-      console.log('readTemperature');
-      flowerPower.readTemperature(function(temperature) {
-        console.log('temperature = ' + temperature.toFixed(2) + '°C');
+      console.log('readSoilTemperature');
+      flowerPower.readSoilTemperature(function(temperature) {
+        console.log('soil temperature = ' + temperature.toFixed(2) + '°C');
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readAirTemperature');
+      flowerPower.readAirTemperature(function(temperature) {
+        console.log('air temperature = ' + temperature.toFixed(2) + '°C');
 
         callback();
       });

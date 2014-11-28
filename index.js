@@ -12,10 +12,14 @@ var HARDWARE_REVISION_UUID                  = '2a27';
 
 var BATTERY_LEVEL_UUID                      = '2a19';
 
-var LIVE_MODE_UUID                          = '39e1fa0684a811e2afba0002a5d5c51b';
 var SUNLIGHT_UUID                           = '39e1fa0184a811e2afba0002a5d5c51b';
-var TEMPERATURE_UUID                        = '39e1fa0484a811e2afba0002a5d5c51b';
+var SOIL_EC_UUID                            = '39e1fa0284a811e2afba0002a5d5c51b';
+var SOIL_TEMPERATURE_UUID                   = '39e1fa0384a811e2afba0002a5d5c51b';
+var AIR_TEMPERATURE_UUID                    = '39e1fa0484a811e2afba0002a5d5c51b';
 var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b';
+var LIVE_MODE_PERIOD_UUID                   = '39e1fa0684a811e2afba0002a5d5c51b';
+var LED_MOISTURE_UUID                       = '39e1fa0784a811e2afba0002a5d5c51b';
+var LAST_MOVE_DATE_UUID                     = '39e1fa0884a811e2afba0002a5d5c51b';
 
 var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
 var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
@@ -233,26 +237,48 @@ FlowerPower.prototype.convertTemperatureData = function(data) {
   return temperature;
 };
 
-FlowerPower.prototype.readTemperature = function(callback) {
-  this.readDataCharacteristic(TEMPERATURE_UUID, function(data) {
+FlowerPower.prototype.readSoilTemperature = function(callback) {
+  this.readDataCharacteristic(SOIL_TEMPERATURE_UUID, function(data) {
     var temperature = this.convertTemperatureData(data);
 
     callback(temperature);
   }.bind(this));
 };
 
-FlowerPower.prototype.onTemperatureChange = function(data) {
+FlowerPower.prototype.onSoilTemperatureChange = function(data) {
   var temperature = this.convertTemperatureData(data);
 
-  this.emit('temperatureChange', temperature);
+  this.emit('soilTemperatureChange', temperature);
 };
 
-FlowerPower.prototype.notifyTemperature = function(callback) {
-  this.notifyCharacteristic(TEMPERATURE_UUID, true, this.onTemperatureChange.bind(this), callback);
+FlowerPower.prototype.notifySoilTemperature = function(callback) {
+  this.notifyCharacteristic(SOIL_TEMPERATURE_UUID, true, this.onSoilTemperatureChange.bind(this), callback);
 };
 
-FlowerPower.prototype.unnotifyTemperature = function(callback) {
-  this.notifyCharacteristic(TEMPERATURE_UUID, false, this.onTemperatureChange.bind(this), callback);
+FlowerPower.prototype.unnotifySoilTemperature = function(callback) {
+  this.notifyCharacteristic(SOIL_TEMPERATURE_UUID, false, this.onSoilTemperatureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.readAirTemperature = function(callback) {
+  this.readDataCharacteristic(AIR_TEMPERATURE_UUID, function(data) {
+    var temperature = this.convertTemperatureData(data);
+
+    callback(temperature);
+  }.bind(this));
+};
+
+FlowerPower.prototype.onAirTemperatureChange = function(data) {
+  var temperature = this.convertTemperatureData(data);
+
+  this.emit('airTemperatureChange', temperature);
+};
+
+FlowerPower.prototype.notifyAirTemperature = function(callback) {
+  this.notifyCharacteristic(AIR_TEMPERATURE_UUID, true, this.onAirTemperatureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyAirTemperature = function(callback) {
+  this.notifyCharacteristic(AIR_TEMPERATURE_UUID, false, this.onAirTemperatureChange.bind(this), callback);
 };
 
 
@@ -296,20 +322,24 @@ FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
 
 FlowerPower.prototype.enableLiveMode = function(callback) {
   this.notifySunlight(function() {
-    this.notifyTemperature(function() {
-      this.notifySoilMoisture(function() {
-        this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x01]), callback);
+    this.notifySoilTemperature(function() {
+      this.notifyAirTemperature(function() {
+        this.notifySoilMoisture(function() {
+          this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x01]), callback);
+        }.bind(this));
       }.bind(this));
     }.bind(this));
   }.bind(this));
 };
 
 FlowerPower.prototype.disableLiveMode = function(callback) {
-  this.writeDataCharacteristic(LIVE_MODE_UUID, new Buffer([0x00]), function() {
+  this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x00]), function() {
     this.unnotifySunlight(function() {
-      this.unnotifyTemperature(function() {
-        this.unnotifySoilMoisture(function() {
-          callback();
+      this.unnotifySoilTemperature(function() {
+        this.unnotifyAirTemperature(function() {
+          this.unnotifySoilMoisture(function() {
+            callback();
+          }.bind(this));
         }.bind(this));
       }.bind(this));
     }.bind(this));

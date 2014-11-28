@@ -3,7 +3,7 @@ node-flower-power
 
 [![Analytics](https://ga-beacon.appspot.com/UA-56089547-1/sandeepmistry/node-flower-power?pixel)](https://github.com/igrigorik/ga-beacon)
 
-node.js lib for the [Parrot Flower Power](http://www.parrot.com/flowerpower/usa/)
+node.js lib for the [Parrot Flower Power](http://www.parrot.com/usa/products/flower-power/)
 
 
 Install
@@ -61,9 +61,13 @@ __Sunlight__
     // sunlight units are photons per square meter
     flowerPower.readSunlight(callback(sunlight));
 
-__Temperature__
+__Soil Temperature__
 
-    flowerPower.readTemperature(callback(temperature)); // C
+    flowerPower.readSoilTemperature(callback(temperature)); // C
+
+__Air Temperature__
+
+    flowerPower.readAirTemperature(callback(temperature)); // C
 
 __Soil Moisture__
 
@@ -72,7 +76,7 @@ __Soil Moisture__
 
 __Live mode__
 
-    // sunlightChange, temperatureChange, soilMoistureChange events are emitted (see below)
+    // sunlightChange, soilTemperatureChange, airTemperatureChange, soilMoistureChange events are emitted (see below)
 
     flowerPower.enableLiveMode(callback);
 
@@ -89,9 +93,13 @@ __Sunlight Change__
 
     flowerPower.on('sunlightChange', callback(sunlight));
 
-__Temperature Change__
+__Soil Temperature Change__
 
-    flowerPower.on('temperatureChange', callback(temperature));
+    flowerPower.on('soilTemperatureChange', callback(soilTemperature));
+
+__Air Temperature Change__
+
+    flowerPower.on('airTemperatureChange', callback(airTemperature));
 
 __Soil Moisture Change__
 
