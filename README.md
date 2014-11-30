@@ -9,7 +9,7 @@ node.js lib for the [Parrot Flower Power](http://www.parrot.com/usa/products/flo
 Install
 -------
 
-npm install flower-power
+    npm install flower-power
 
 Usage
 -----
