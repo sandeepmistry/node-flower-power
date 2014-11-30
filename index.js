@@ -18,7 +18,7 @@ var SOIL_TEMPERATURE_UUID                   = '39e1fa0384a811e2afba0002a5d5c51b'
 var AIR_TEMPERATURE_UUID                    = '39e1fa0484a811e2afba0002a5d5c51b';
 var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b';
 var LIVE_MODE_PERIOD_UUID                   = '39e1fa0684a811e2afba0002a5d5c51b';
-var LED_MOISTURE_UUID                       = '39e1fa0784a811e2afba0002a5d5c51b';
+var LED_UUID                                = '39e1fa0784a811e2afba0002a5d5c51b';
 var LAST_MOVE_DATE_UUID                     = '39e1fa0884a811e2afba0002a5d5c51b';
 
 var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
@@ -223,6 +223,37 @@ FlowerPower.prototype.unnotifySunlight = function(callback) {
   this.notifyCharacteristic(SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
 };
 
+FlowerPower.prototype.convertSoilElectricalConductivityData = function(data) {
+  var rawValue = data.readUInt16LE(0) * 1.0;
+
+  // TODO: convert raw (0 - 1771) to 0 to 10 (mS/cm)
+  var soilElectricalConductivity = rawValue;
+
+  return soilElectricalConductivity;
+};
+
+FlowerPower.prototype.readSoilElectricalConductivity = function(callback) {
+  this.readDataCharacteristic(SOIL_EC_UUID, function(data) {
+    var soilEC = this.convertSoilElectricalConductivityData(data);
+
+    callback(soilEC);
+  }.bind(this));
+};
+
+FlowerPower.prototype.onSoilElectricalConductivityChange = function(data) {
+  var temperature = this.convertSoilElectricalConductivityData(data);
+
+  this.emit('soilElectricalConductivityChange', temperature);
+};
+
+FlowerPower.prototype.notifySoilElectricalConductivity = function(callback) {
+  this.notifyCharacteristic(SOIL_EC_UUID, true, this.onSoilElectricalConductivityChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifySoilElectricalConductivity = function(callback) {
+  this.notifyCharacteristic(SOIL_EC_UUID, false, this.onSoilElectricalConductivityChange.bind(this), callback);
+};
+
 FlowerPower.prototype.convertTemperatureData = function(data) {
   var rawValue = data.readUInt16LE(0) * 1.0;
 
@@ -322,10 +353,12 @@ FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
 
 FlowerPower.prototype.enableLiveMode = function(callback) {
   this.notifySunlight(function() {
-    this.notifySoilTemperature(function() {
-      this.notifyAirTemperature(function() {
-        this.notifySoilMoisture(function() {
-          this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x01]), callback);
+    this.notifySoilElectricalConductivity(function() {
+      this.notifySoilTemperature(function() {
+        this.notifyAirTemperature(function() {
+          this.notifySoilMoisture(function() {
+            this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x01]), callback);
+          }.bind(this));
         }.bind(this));
       }.bind(this));
     }.bind(this));
@@ -335,15 +368,25 @@ FlowerPower.prototype.enableLiveMode = function(callback) {
 FlowerPower.prototype.disableLiveMode = function(callback) {
   this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x00]), function() {
     this.unnotifySunlight(function() {
-      this.unnotifySoilTemperature(function() {
-        this.unnotifyAirTemperature(function() {
-          this.unnotifySoilMoisture(function() {
-            callback();
+      this.unnotifySoilElectricalConductivity(function() {
+        this.unnotifySoilTemperature(function() {
+          this.unnotifyAirTemperature(function() {
+            this.unnotifySoilMoisture(function() {
+              callback();
+            }.bind(this));
           }.bind(this));
         }.bind(this));
       }.bind(this));
     }.bind(this));
   }.bind(this));
+};
+
+FlowerPower.prototype.ledPulse = function(callback) {
+  this.writeDataCharacteristic(LED_UUID, new Buffer([0x01]), callback);
+};
+
+FlowerPower.prototype.ledOff = function(callback) {
+  this.writeDataCharacteristic(LED_UUID, new Buffer([0x00]), callback);
 };
 
 module.exports = FlowerPower;

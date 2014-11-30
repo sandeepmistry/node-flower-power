@@ -82,6 +82,12 @@ __Live mode__
 
     flowerPower.disableLiveMode(callback);
 
+__LED__
+
+    flowerPower.ledFade(callback);
+
+    flowerPower.ledOff(callback);
+
 Events
 ------
 
