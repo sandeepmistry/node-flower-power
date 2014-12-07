@@ -351,18 +351,22 @@ FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
   this.notifyCharacteristic(SOIL_MOISTURE_UUID, false, this.onSoilMoistureChange.bind(this), callback);
 };
 
-FlowerPower.prototype.enableLiveMode = function(callback) {
+FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {
   this.notifySunlight(function() {
     this.notifySoilElectricalConductivity(function() {
       this.notifySoilTemperature(function() {
         this.notifyAirTemperature(function() {
           this.notifySoilMoisture(function() {
-            this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x01]), callback);
+            this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([period]), callback);
           }.bind(this));
         }.bind(this));
       }.bind(this));
     }.bind(this));
   }.bind(this));
+};
+
+FlowerPower.prototype.enableLiveMode = function(callback) {
+  this.enableLiveModeWithPeriod(1, callback);
 };
 
 FlowerPower.prototype.disableLiveMode = function(callback) {
