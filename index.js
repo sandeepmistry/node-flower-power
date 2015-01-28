@@ -1,16 +1,10 @@
 var events = require('events');
 var util = require('util');
 
-var noble = require('noble');
+var NobleDevice = require('noble-device');
 
-var SERVICE_UUID                            = '39e1fa0084a811e2afba0002a5d5c51b';
-
-var SYSTEM_ID_UUID                          = '2a23';
-var SERIAL_NUMBER_UUID                      = '2a25';
-var FIRMWARE_REVISION_UUID                  = '2a26';
-var HARDWARE_REVISION_UUID                  = '2a27';
-
-var BATTERY_LEVEL_UUID                      = '2a19';
+var LIVE_SERVICE_UUID                       = '39e1fa0084a811e2afba0002a5d5c51b';
+var CALIBRATION_SERVICE_UUID                = '39e1fe0084a811e2afba0002a5d5c51b';
 
 var SUNLIGHT_UUID                           = '39e1fa0184a811e2afba0002a5d5c51b';
 var SOIL_EC_UUID                            = '39e1fa0284a811e2afba0002a5d5c51b';
@@ -25,45 +19,22 @@ var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b'
 var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
 
 function FlowerPower(peripheral) {
-  this._peripheral = peripheral;
-  this._services = {};
-  this._characteristics = {};
+  NobleDevice.call(this, peripheral);
 
   this.uuid = peripheral.uuid;
   this.name = peripheral.advertisement.localName;
-
-  this._peripheral.on('disconnect', this.onDisconnect.bind(this));
 }
 
-util.inherits(FlowerPower, events.EventEmitter);
+NobleDevice.Util.inherits(FlowerPower, NobleDevice);
+NobleDevice.Util.mixin(FlowerPower, NobleDevice.BatteryService);
+NobleDevice.Util.mixin(FlowerPower, NobleDevice.DeviceInformationService, [
+  'readDeviceInformationStringCharacteristic',
+  'readSerialNumber',
+  'readFirmwareRevision',
+  'readHardwareRevision'
+]);
 
-FlowerPower.discover = function(callback) {
-  var startScanningOnPowerOn = function() {
-    if (noble.state === 'poweredOn') {
-      var onDiscover = function(peripheral) {
-        noble.removeListener('discover', onDiscover);
-
-        noble.stopScanning();
-
-        var flowerPower = new FlowerPower(peripheral);
-
-        callback(flowerPower);
-      };
-
-      noble.on('discover', onDiscover);
-
-      noble.startScanning([SERVICE_UUID]);
-    } else {
-      noble.once('stateChange', startScanningOnPowerOn);
-    }
-  };
-
-  startScanningOnPowerOn();
-};
-
-FlowerPower.prototype.onDisconnect = function() {
-  this.emit('disconnect');
-};
+FlowerPower.SCAN_UUIDS = [LIVE_SERVICE_UUID];
 
 FlowerPower.prototype.toString = function() {
   return JSON.stringify({
@@ -72,98 +43,8 @@ FlowerPower.prototype.toString = function() {
   });
 };
 
-FlowerPower.prototype.connect = function(callback) {
-  this._peripheral.connect(callback);
-};
-
-FlowerPower.prototype.disconnect = function(callback) {
-  this._peripheral.disconnect(callback);
-};
-
-FlowerPower.prototype.discoverServicesAndCharacteristics = function(callback) {
-  this._peripheral.discoverAllServicesAndCharacteristics(function(error, services, characteristics) {
-    if (error === null) {
-      for (var i in services) {
-        var service = services[i];
-        this._services[service.uuid] = service;
-      }
-
-      for (var j in characteristics) {
-        var characteristic = characteristics[j];
-
-        this._characteristics[characteristic.uuid] = characteristic;
-      }
-    }
-
-    callback(error);
-  }.bind(this));
-};
-
-FlowerPower.prototype.writeDataCharacteristic = function(uuid, data, callback) {
-  this._characteristics[uuid].write(data, false, callback);
-};
-
-FlowerPower.prototype.notifyCharacteristic = function(uuid, notify, listener, callback) {
-  var characteristic = this._characteristics[uuid];
-
-  characteristic.notify(notify, function(state) {
-    if (notify) {
-      characteristic.addListener('read', listener);
-    } else {
-      characteristic.removeListener('read', listener);
-    }
-
-    callback();
-  });
-};
-
-FlowerPower.prototype.readDataCharacteristic = function(uuid, callback) {
-  this._characteristics[uuid].read(function(error, data) {
-    callback(data);
-  });
-};
-
-FlowerPower.prototype.readStringCharacteristic = function(uuid, callback) {
-  this.readDataCharacteristic(uuid, function(data) {
-    for (var i = 0; i < data.length; i++) {
-      if (data[i] === 0x00) {
-        data = data.slice(0, i);
-        break;
-      }
-    }
-
-    callback(data.toString());
-  });
-};
-
-FlowerPower.prototype.readSystemId = function(callback) {
-  this.readDataCharacteristic(SYSTEM_ID_UUID, function(data) {
-    var systemId = data.toString('hex').match(/.{1,2}/g).reverse().join(':');
-
-    callback(systemId);
-  });
-};
-
-FlowerPower.prototype.readSerialNumber = function(callback) {
-  this.readStringCharacteristic(SERIAL_NUMBER_UUID, callback);
-};
-
-FlowerPower.prototype.readFirmwareRevision = function(callback) {
-  this.readStringCharacteristic(FIRMWARE_REVISION_UUID, callback);
-};
-
-FlowerPower.prototype.readHardwareRevision = function(callback) {
-  this.readStringCharacteristic(HARDWARE_REVISION_UUID, callback);
-};
-
-FlowerPower.prototype.readBatteryLevel = function(callback) {
-  this.readDataCharacteristic(BATTERY_LEVEL_UUID, function(data) {
-    callback(data.readUInt8(0));
-  });
-};
-
 FlowerPower.prototype.readFriendlyName = function(callback) {
-  this.readStringCharacteristic(FRIENDLY_NAME_UUID, callback);
+  this.readStringCharacteristic(CALIBRATION_SERVICE_UUID, FRIENDLY_NAME_UUID, callback);
 };
 
 FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
@@ -174,11 +55,11 @@ FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
     data[i] = friendlyNameBuffer[i];
   }
 
-  this.writeDataCharacteristic(FRIENDLY_NAME_UUID, data, callback);
+  this.writeDataCharacteristic(CALIBRATION_SERVICE_UUID, FRIENDLY_NAME_UUID, data, callback);
 };
 
 FlowerPower.prototype.readColor = function(callback) {
-  this.readDataCharacteristic(COLOR_UUID, function(data) {
+  this.readDataCharacteristic(CALIBRATION_SERVICE_UUID, COLOR_UUID, function(data) {
     var colorCode = data.readUInt16LE(0);
 
     var COLOR_CODE_MAPPER = {
@@ -202,7 +83,7 @@ FlowerPower.prototype.convertSunlightData = function(data) {
 };
 
 FlowerPower.prototype.readSunlight = function(callback) {
-  this.readDataCharacteristic(SUNLIGHT_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SUNLIGHT_UUID, function(data) {
     var sunlight = this.convertSunlightData(data);
 
     callback(sunlight);
@@ -216,11 +97,11 @@ FlowerPower.prototype.onSunlightChange = function(data) {
 };
 
 FlowerPower.prototype.notifySunlight = function(callback) {
-  this.notifyCharacteristic(SUNLIGHT_UUID, true, this.onSunlightChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SUNLIGHT_UUID, true, this.onSunlightChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifySunlight = function(callback) {
-  this.notifyCharacteristic(SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SUNLIGHT_UUID, false, this.onSunlightChange.bind(this), callback);
 };
 
 FlowerPower.prototype.convertSoilElectricalConductivityData = function(data) {
@@ -233,7 +114,7 @@ FlowerPower.prototype.convertSoilElectricalConductivityData = function(data) {
 };
 
 FlowerPower.prototype.readSoilElectricalConductivity = function(callback) {
-  this.readDataCharacteristic(SOIL_EC_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, function(data) {
     var soilEC = this.convertSoilElectricalConductivityData(data);
 
     callback(soilEC);
@@ -247,11 +128,11 @@ FlowerPower.prototype.onSoilElectricalConductivityChange = function(data) {
 };
 
 FlowerPower.prototype.notifySoilElectricalConductivity = function(callback) {
-  this.notifyCharacteristic(SOIL_EC_UUID, true, this.onSoilElectricalConductivityChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, true, this.onSoilElectricalConductivityChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifySoilElectricalConductivity = function(callback) {
-  this.notifyCharacteristic(SOIL_EC_UUID, false, this.onSoilElectricalConductivityChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, false, this.onSoilElectricalConductivityChange.bind(this), callback);
 };
 
 FlowerPower.prototype.convertTemperatureData = function(data) {
@@ -269,7 +150,7 @@ FlowerPower.prototype.convertTemperatureData = function(data) {
 };
 
 FlowerPower.prototype.readSoilTemperature = function(callback) {
-  this.readDataCharacteristic(SOIL_TEMPERATURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_TEMPERATURE_UUID, function(data) {
     var temperature = this.convertTemperatureData(data);
 
     callback(temperature);
@@ -283,15 +164,15 @@ FlowerPower.prototype.onSoilTemperatureChange = function(data) {
 };
 
 FlowerPower.prototype.notifySoilTemperature = function(callback) {
-  this.notifyCharacteristic(SOIL_TEMPERATURE_UUID, true, this.onSoilTemperatureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_TEMPERATURE_UUID, true, this.onSoilTemperatureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifySoilTemperature = function(callback) {
-  this.notifyCharacteristic(SOIL_TEMPERATURE_UUID, false, this.onSoilTemperatureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_TEMPERATURE_UUID, false, this.onSoilTemperatureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.readAirTemperature = function(callback) {
-  this.readDataCharacteristic(AIR_TEMPERATURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, function(data) {
     var temperature = this.convertTemperatureData(data);
 
     callback(temperature);
@@ -305,11 +186,11 @@ FlowerPower.prototype.onAirTemperatureChange = function(data) {
 };
 
 FlowerPower.prototype.notifyAirTemperature = function(callback) {
-  this.notifyCharacteristic(AIR_TEMPERATURE_UUID, true, this.onAirTemperatureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, true, this.onAirTemperatureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifyAirTemperature = function(callback) {
-  this.notifyCharacteristic(AIR_TEMPERATURE_UUID, false, this.onAirTemperatureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, false, this.onAirTemperatureChange.bind(this), callback);
 };
 
 
@@ -330,7 +211,7 @@ FlowerPower.prototype.convertSoilMoistureData = function(data) {
 };
 
 FlowerPower.prototype.readSoilMoisture = function(callback) {
-  this.readDataCharacteristic(SOIL_MOISTURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, function(data) {
     var soilMoisture = this.convertSoilMoistureData(data);
 
     callback(soilMoisture);
@@ -344,11 +225,11 @@ FlowerPower.prototype.onSoilMoistureChange = function(data) {
 };
 
 FlowerPower.prototype.notifySoilMoisture = function(callback) {
-  this.notifyCharacteristic(SOIL_MOISTURE_UUID, true, this.onSoilMoistureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, true, this.onSoilMoistureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
-  this.notifyCharacteristic(SOIL_MOISTURE_UUID, false, this.onSoilMoistureChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, false, this.onSoilMoistureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {
@@ -357,7 +238,7 @@ FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {
       this.notifySoilTemperature(function() {
         this.notifyAirTemperature(function() {
           this.notifySoilMoisture(function() {
-            this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([period]), callback);
+            this.writeDataCharacteristic(LIVE_SERVICE_UUID, LIVE_MODE_PERIOD_UUID, new Buffer([period]), callback);
           }.bind(this));
         }.bind(this));
       }.bind(this));
@@ -370,7 +251,7 @@ FlowerPower.prototype.enableLiveMode = function(callback) {
 };
 
 FlowerPower.prototype.disableLiveMode = function(callback) {
-  this.writeDataCharacteristic(LIVE_MODE_PERIOD_UUID, new Buffer([0x00]), function() {
+  this.writeDataCharacteristic(LIVE_SERVICE_UUID, LIVE_MODE_PERIOD_UUID, new Buffer([0x00]), function() {
     this.unnotifySunlight(function() {
       this.unnotifySoilElectricalConductivity(function() {
         this.unnotifySoilTemperature(function() {
@@ -386,11 +267,11 @@ FlowerPower.prototype.disableLiveMode = function(callback) {
 };
 
 FlowerPower.prototype.ledPulse = function(callback) {
-  this.writeDataCharacteristic(LED_UUID, new Buffer([0x01]), callback);
+  this.writeDataCharacteristic(LIVE_SERVICE_UUID, LED_UUID, new Buffer([0x01]), callback);
 };
 
 FlowerPower.prototype.ledOff = function(callback) {
-  this.writeDataCharacteristic(LED_UUID, new Buffer([0x00]), callback);
+  this.writeDataCharacteristic(LIVE_SERVICE_UUID, LED_UUID, new Buffer([0x00]), callback);
 };
 
 module.exports = FlowerPower;

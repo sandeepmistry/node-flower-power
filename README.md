@@ -9,107 +9,139 @@ node.js lib for the [Parrot Flower Power](http://www.parrot.com/usa/products/flo
 Install
 -------
 
-    npm install flower-power
+```sh
+npm install flower-power
+```
 
 Usage
 -----
 
-    var FlowerPower = require('flower-power');
+```javascript
+var FlowerPower = require('flower-power');
+```
 
 __Discover__
 
-    FlowerPower.discover(callback(flowerPower));
+```javascript
+FlowerPower.discover(callback(flowerPower));
+```
 
-__Connect__
+__Connect and Setup__
 
-    flowerPower.connect(callback);
+```javascript
+flowerPower.connectAndSetup(callback);
+```
 
 __Disconnect__
 
-    flowerPower.disconnect(callback);
-
-__Discover Services and Characteristics__
-
-    flowerPower.discoverServicesAndCharacteristics(callback);
+```javascript
+flowerPower.disconnect(callback);
+```
 
 __Device Info__
 
-    flowerPower.readSystemId(callback(systemId));
+```javascript
+flowerPower.readSerialNumber(callback(serialNumber));
 
-    flowerPower.readSerialNumber(callback(serialNumber));
+flowerPower.readFirmwareRevision(callback(firmwareRevision));
 
-    flowerPower.readFirmwareRevision(callback(firmwareRevision));
-
-    flowerPower.readHardwareRevision(callback(hardwareRevision));
+flowerPower.readHardwareRevision(callback(hardwareRevision));
+```
 
 __Other Info__
 
-    flowerPower.readFriendlyName(callback(friendlyName));
+```javascript
+flowerPower.readFriendlyName(callback(friendlyName));
 
-    flowerPower.writeFriendlyName(friendlyName, callback);
+flowerPower.writeFriendlyName(friendlyName, callback);
 
 
-    flowerPower.readColor(callback(color));
+flowerPower.readColor(callback(color));
+```
 
 __Battery Level__
 
-    // batteryLevel range is 0 - 100
-    flowerPower.readBatteryLevel(callback(batteryLevel));
+```javascript
+// batteryLevel range is 0 - 100
+flowerPower.readBatteryLevel(callback(batteryLevel));
+```
 
 __Sunlight__
 
-    // sunlight units are photons per square meter
-    flowerPower.readSunlight(callback(sunlight));
+```javascript
+// sunlight units are photons per square meter
+flowerPower.readSunlight(callback(sunlight));
+```
 
 __Soil Temperature__
 
-    flowerPower.readSoilTemperature(callback(temperature)); // C
+```javascript
+flowerPower.readSoilTemperature(callback(temperature)); // C
+```
 
 __Air Temperature__
 
-    flowerPower.readAirTemperature(callback(temperature)); // C
+```javascript
+flowerPower.readAirTemperature(callback(temperature)); // C
+```
 
 __Soil Moisture__
 
-    // soilMoisture units is percentage (%)
-    flowerPower.readSoilMoisture(callback(soilMoisture));
+```javascript
+// soilMoisture units is percentage (%)
+flowerPower.readSoilMoisture(callback(soilMoisture));
+```
 
 __Live mode__
 
-    // sunlightChange, soilTemperatureChange, airTemperatureChange, soilMoistureChange events are emitted (see below)
+```javascript
+// sunlightChange, soilTemperatureChange, airTemperatureChange, soilMoistureChange events are emitted (see below)
 
-    flowerPower.enableLiveMode(callback);
+flowerPower.enableLiveMode(callback);
 
-    flowerPower.disableLiveMode(callback);
+flowerPower.disableLiveMode(callback);
+```
 
 __LED__
 
-    flowerPower.ledFade(callback);
+```javascript
+flowerPower.ledFade(callback);
 
-    flowerPower.ledOff(callback);
+flowerPower.ledOff(callback);
+```
 
 Events
 ------
 
 __Disconnect__
 
-    flowerPower.on('disconnect', callback);
+```javascript
+flowerPower.on('disconnect', callback);
+```
 
 __Sunlight Change__
 
-    flowerPower.on('sunlightChange', callback(sunlight));
+```javascript
+flowerPower.on('sunlightChange', callback(sunlight));
+```
 
 __Soil Temperature Change__
 
-    flowerPower.on('soilTemperatureChange', callback(soilTemperature));
+```javascript
+flowerPower.on('soilTemperatureChange', callback(soilTemperature));
+```
 
 __Air Temperature Change__
 
-    flowerPower.on('airTemperatureChange', callback(airTemperature));
+```javascript
+flowerPower.on('airTemperatureChange', callback(airTemperature));
+```
 
 __Soil Moisture Change__
 
-    flowerPower.on('soilMoistureChange', callback(soilMoisture));
+```javascript
+flowerPower.on('soilMoistureChange', callback(soilMoisture));
+```
 
 TODO
 ----

@@ -34,15 +34,8 @@ FlowerPower.discover(function(flowerPower) {
       flowerPower.connect(callback);
     },
     function(callback) {
-      console.log('discoverServicesAndCharacteristics');
-      flowerPower.discoverServicesAndCharacteristics(callback);
-    },
-    function(callback) {
-      console.log('readSystemId');
-      flowerPower.readSystemId(function(systemId) {
-        console.log('\tsystem id = ' + systemId);
-        callback();
-      });
+      console.log('connectAndSetup');
+      flowerPower.connectAndSetup(callback);
     },
     function(callback) {
       console.log('readSerialNumber');
