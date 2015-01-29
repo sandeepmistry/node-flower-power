@@ -30,6 +30,31 @@ FlowerPower.discover(function(flowerPower) {
         console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
       });
 
+
+      flowerPower.on('calibratedSoilMoistureChange', function(soilMoisture) {
+        console.log('calibrated soil moisture = ' + soilMoisture.toFixed(2) + '%');
+      });
+
+      flowerPower.on('calibratedAirTemperatureChange', function(temperature) {
+        console.log('calibrated air temperature = ' + temperature.toFixed(2) + '°C');
+      });
+
+      flowerPower.on('calibratedSunlightChange', function(sunlight) {
+        console.log('calibrated sunlight = ' + sunlight.toFixed(2));
+      });
+
+      flowerPower.on('calibratedEaChange', function(ea) {
+        console.log('calibrated EA = ' + ea.toFixed(2));
+      });
+
+      flowerPower.on('calibratedEcbChange', function(ecb) {
+        console.log('calibrated ECB = ' + ecb.toFixed(2));
+      });
+
+      flowerPower.on('calibratedEcPorousChange', function(ecPorous) {
+        console.log('calibrated EC porous = ' + ecPorous.toFixed(2));
+      });
+
       console.log('connectAndSetup');
       flowerPower.connectAndSetup(callback);
     },
@@ -160,7 +185,7 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('readCalibratedEa');
       flowerPower.readCalibratedEa(function(ea) {
-        console.log('calibrated EA = ' + ea);
+        console.log('calibrated EA = ' + ea.toFixed(2));
 
         callback();
       });
@@ -168,7 +193,7 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('readCalibratedEcb');
       flowerPower.readCalibratedEcb(function(ecb) {
-        console.log('calibrated ECB = ' + ecb);
+        console.log('calibrated ECB = ' + ecb.toFixed(2));
 
         callback();
       });
@@ -176,7 +201,7 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('readCalibratedEcPorous');
       flowerPower.readCalibratedEcPorous(function(ecPorous) {
-        console.log('calibrated EC porous = ' + ecPorous);
+        console.log('calibrated EC porous = ' + ecPorous.toFixed(2));
 
         callback();
       });
@@ -192,6 +217,18 @@ FlowerPower.discover(function(flowerPower) {
     function(callback) {
       console.log('disableLiveMode');
       flowerPower.disableLiveMode(callback);
+    },
+    function(callback) {
+      console.log('enableCalibratedLiveMode');
+      flowerPower.enableCalibratedLiveMode(callback);
+    },
+    function(callback) {
+      console.log('calibrated live mode');
+      setTimeout(callback, 5000);
+    },
+    function(callback) {
+      console.log('disableCalibratedLiveMode');
+      flowerPower.disableCalibratedLiveMode(callback);
     },
     function(callback) {
       console.log('ledPulse');

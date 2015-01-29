@@ -117,11 +117,26 @@ flowerPower.readCalibratedEcPorous(callback(ecPorous));
 __Live mode__
 
 ```javascript
-// sunlightChange, soilTemperatureChange, airTemperatureChange, soilMoistureChange events are emitted (see below)
+// sunlightChange, soilTemperatureChange, airTemperatureChange,
+// soilMoistureChange events are emitted (see below)
 
 flowerPower.enableLiveMode(callback);
 
 flowerPower.disableLiveMode(callback);
+```
+
+__Calibrated live mode__
+
+```javascript
+// firmware versions 1.1 and above
+
+// calibratedSoilMoistureChange, calibratedAirTemperatureChange,
+// calibratedSunlightChange, calibratedEaChange, calibratedEcbChange,
+// calibratedEcPorousChange events are emitted (see below)
+
+flowerPower.enableCalibratedLiveMode(callback);
+
+flowerPower.disableCalibratedLiveMode(callback);
 ```
 
 __LED__
@@ -164,6 +179,17 @@ __Soil Moisture Change__
 ```javascript
 flowerPower.on('soilMoistureChange', callback(soilMoisture));
 ```
+
+__Calibrated Change__
+```javascript
+flowerPower.on('calibratedSoilMoistureChange', callback(soilMoisture));
+flowerPower.on('calibratedAirTemperatureChange', callback(temperature));
+flowerPower.on('calibratedSunlightChange', callback(sunlight));
+flowerPower.on('calibratedEaChange', callback(ea));
+flowerPower.on('calibratedEcbChange', callback(ecb));
+flowerPower.on('calibratedEcPorousChange', callback(ecPorous));
+```
+
 
 TODO
 ----

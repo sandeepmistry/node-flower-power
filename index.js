@@ -243,24 +243,96 @@ FlowerPower.prototype.readCalibratedSoilMoisture = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_SOIL_MOISTURE_UUID, callback);
 };
 
+FlowerPower.prototype.onCalibratedSoilMoistureChange = function(value) {
+  this.emit('calibratedSoilMoistureChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedSoilMoisture = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_SOIL_MOISTURE_UUID, true, this.onCalibratedSoilMoistureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedSoilMoisture = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_SOIL_MOISTURE_UUID, false, this.onCalibratedSoilMoistureChange.bind(this), callback);
+};
+
 FlowerPower.prototype.readCalibratedAirTemperature = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_AIR_TEMPERATURE_UUID, callback);
+};
+
+FlowerPower.prototype.onCalibratedAirTemperatureChange = function(value) {
+  this.emit('calibratedAirTemperatureChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedAirTemperatureChange = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_AIR_TEMPERATURE_UUID, true, this.onCalibratedAirTemperatureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedAirTemperatureChange = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_AIR_TEMPERATURE_UUID, false, this.onCalibratedAirTemperatureChange.bind(this), callback);
 };
 
 FlowerPower.prototype.readCalibratedSunlight = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_DLI_UUID, callback);
 };
 
+FlowerPower.prototype.onCalibratedSunlightChange = function(value) {
+  this.emit('calibratedSunlightChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedSunlight = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_DLI_UUID, true, this.onCalibratedSunlightChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedSunlight = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_DLI_UUID, false, this.onCalibratedSunlightChange.bind(this), callback);
+};
+
 FlowerPower.prototype.readCalibratedEa = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EA_UUID, callback);
+};
+
+FlowerPower.prototype.onCalibratedEaChange = function(value) {
+  this.emit('calibratedEaChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedEa = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EA_UUID, true, this.onCalibratedEaChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedEa = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EA_UUID, false, this.onCalibratedEaChange.bind(this), callback);
 };
 
 FlowerPower.prototype.readCalibratedEcb = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_ECB_UUID, callback);
 };
 
+FlowerPower.prototype.onCalibratedEcbChange = function(value) {
+  this.emit('calibratedEcbChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedEcb = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_ECB_UUID, true, this.onCalibratedEcbChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedEcb = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_ECB_UUID, false, this.onCalibratedEcbChange.bind(this), callback);
+};
+
 FlowerPower.prototype.readCalibratedEcPorous = function(callback) {
   this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, callback);
+};
+
+FlowerPower.prototype.onCalibratedEcPorousChange = function(value) {
+  this.emit('calibratedEcPorousChange', value.readFloatLE(0));
+};
+
+FlowerPower.prototype.notifyCalibratedEcPorous = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, true, this.onCalibratedEcbChange.bind(this), callback);
+};
+
+FlowerPower.prototype.unnotifyCalibratedEcPorous = function(callback) {
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, false, this.onCalibratedEcbChange.bind(this), callback);
 };
 
 FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {
@@ -289,6 +361,44 @@ FlowerPower.prototype.disableLiveMode = function(callback) {
           this.unnotifyAirTemperature(function() {
             this.unnotifySoilMoisture(function() {
               callback();
+            }.bind(this));
+          }.bind(this));
+        }.bind(this));
+      }.bind(this));
+    }.bind(this));
+  }.bind(this));
+};
+
+FlowerPower.prototype.enableCalibratedLiveModeWithPeriod = function(period, callback) {
+  this.notifyCalibratedSoilMoisture(function() {
+    this.notifyCalibratedAirTemperatureChange(function() {
+      this.notifyCalibratedSunlight(function() {
+        this.notifyCalibratedEa(function() {
+          this.notifyCalibratedEcb(function() {
+            this.notifyCalibratedEcPorous(function() {
+              this.writeDataCharacteristic(LIVE_SERVICE_UUID, LIVE_MODE_PERIOD_UUID, new Buffer([period]), callback);
+            }.bind(this));
+          }.bind(this));
+        }.bind(this));
+      }.bind(this));
+    }.bind(this));
+  }.bind(this));
+};
+
+FlowerPower.prototype.enableCalibratedLiveMode = function(callback) {
+  this.enableCalibratedLiveModeWithPeriod(1, callback);
+};
+
+FlowerPower.prototype.disableCalibratedLiveMode = function(callback) {
+  this.writeDataCharacteristic(LIVE_SERVICE_UUID, LIVE_MODE_PERIOD_UUID, new Buffer([0x00]), function() {
+    this.unnotifyCalibratedSoilMoisture(function() {
+      this.unnotifyCalibratedAirTemperatureChange(function() {
+        this.unnotifyCalibratedSunlight(function() {
+          this.unnotifyCalibratedEa(function() {
+            this.unnotifyCalibratedEcb(function() {
+              this.unnotifyCalibratedEcPorous(function() {
+                callback();
+              }.bind(this));
             }.bind(this));
           }.bind(this));
         }.bind(this));
