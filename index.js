@@ -14,6 +14,12 @@ var SOIL_MOISTURE_UUID                      = '39e1fa0584a811e2afba0002a5d5c51b'
 var LIVE_MODE_PERIOD_UUID                   = '39e1fa0684a811e2afba0002a5d5c51b';
 var LED_UUID                                = '39e1fa0784a811e2afba0002a5d5c51b';
 var LAST_MOVE_DATE_UUID                     = '39e1fa0884a811e2afba0002a5d5c51b';
+var CALIBRATED_SOIL_MOISTURE_UUID           = '39e1fa0984a811e2afba0002a5d5c51b';
+var CALIBRATED_AIR_TEMPERATURE_UUID         = '39e1fa0a84a811e2afba0002a5d5c51b';
+var CALIBRATED_DLI_UUID                     = '39e1fa0b84a811e2afba0002a5d5c51b';
+var CALIBRATED_EA_UUID                      = '39e1fa0c84a811e2afba0002a5d5c51b';
+var CALIBRATED_ECB_UUID                     = '39e1fa0d84a811e2afba0002a5d5c51b';
+var CALIBRATED_EC_POROUS_UUID               = '39e1fa0e84a811e2afba0002a5d5c51b';
 
 var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
 var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
@@ -28,10 +34,11 @@ function FlowerPower(peripheral) {
 NobleDevice.Util.inherits(FlowerPower, NobleDevice);
 NobleDevice.Util.mixin(FlowerPower, NobleDevice.BatteryService);
 NobleDevice.Util.mixin(FlowerPower, NobleDevice.DeviceInformationService, [
-  'readDeviceInformationStringCharacteristic',
+  'readSystemId',
   'readSerialNumber',
   'readFirmwareRevision',
-  'readHardwareRevision'
+  'readHardwareRevision',
+  'readManufacturerName'
 ]);
 
 FlowerPower.SCAN_UUIDS = [LIVE_SERVICE_UUID];
@@ -230,6 +237,30 @@ FlowerPower.prototype.notifySoilMoisture = function(callback) {
 
 FlowerPower.prototype.unnotifySoilMoisture = function(callback) {
   this.notifyCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, false, this.onSoilMoistureChange.bind(this), callback);
+};
+
+FlowerPower.prototype.readCalibratedSoilMoisture = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_SOIL_MOISTURE_UUID, callback);
+};
+
+FlowerPower.prototype.readCalibratedAirTemperature = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_AIR_TEMPERATURE_UUID, callback);
+};
+
+FlowerPower.prototype.readCalibratedSunlight = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_DLI_UUID, callback);
+};
+
+FlowerPower.prototype.readCalibratedEa = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EA_UUID, callback);
+};
+
+FlowerPower.prototype.readCalibratedEcb = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_ECB_UUID, callback);
+};
+
+FlowerPower.prototype.readCalibratedEcPorous = function(callback) {
+  this.readFloatLECharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, callback);
 };
 
 FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {

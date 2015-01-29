@@ -41,11 +41,15 @@ flowerPower.disconnect(callback);
 __Device Info__
 
 ```javascript
+flowerPower.readSystemId(callback(systemId));
+
 flowerPower.readSerialNumber(callback(serialNumber));
 
 flowerPower.readFirmwareRevision(callback(firmwareRevision));
 
 flowerPower.readHardwareRevision(callback(hardwareRevision));
+
+flowerPower.readManufacturerName(callback(manufacturerName));
 ```
 
 __Other Info__
@@ -90,6 +94,24 @@ __Soil Moisture__
 ```javascript
 // soilMoisture units is percentage (%)
 flowerPower.readSoilMoisture(callback(soilMoisture));
+```
+
+__Calibrated__
+
+```javascript
+// firmware versions 1.1 and above
+
+flowerPower.readCalibratedSoilMoisture(callback(soilMoisture)); // %
+
+flowerPower.readCalibratedAirTemperature(callback(temperature)); // C
+
+flowerPower.readCalibratedSunlight(callback(sunlight)); // photons per square meter
+
+flowerPower.readCalibratedEa(callback(ea));
+
+flowerPower.readCalibratedEcb(callback(ecb));
+
+flowerPower.readCalibratedEcPorous(callback(ecPorous));
 ```
 
 __Live mode__

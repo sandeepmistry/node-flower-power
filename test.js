@@ -30,12 +30,15 @@ FlowerPower.discover(function(flowerPower) {
         console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
       });
 
-      console.log('connect');
-      flowerPower.connect(callback);
-    },
-    function(callback) {
       console.log('connectAndSetup');
       flowerPower.connectAndSetup(callback);
+    },
+    function(callback) {
+      console.log('readSystemId');
+      flowerPower.readSystemId(function(systemId) {
+        console.log('\tsystem id = ' + systemId);
+        callback();
+      });
     },
     function(callback) {
       console.log('readSerialNumber');
@@ -55,6 +58,13 @@ FlowerPower.discover(function(flowerPower) {
       console.log('readHardwareRevision');
       flowerPower.readHardwareRevision(function(hardwareRevision) {
         console.log('\thardware revision = ' + hardwareRevision);
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readManufacturerName');
+      flowerPower.readManufacturerName(function(manufacturerName) {
+        console.log('\tmanufacturer name = ' + manufacturerName);
         callback();
       });
     },
@@ -119,6 +129,54 @@ FlowerPower.discover(function(flowerPower) {
       console.log('readSoilMoisture');
       flowerPower.readSoilMoisture(function(soilMoisture) {
         console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedSoilMoisture');
+      flowerPower.readCalibratedSoilMoisture(function(soilMoisture) {
+        console.log('calibrated soil moisture = ' + soilMoisture.toFixed(2) + '%');
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedAirTemperature');
+      flowerPower.readCalibratedAirTemperature(function(temperature) {
+        console.log('calibrated air temperature = ' + temperature.toFixed(2) + '°C');
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedSunlight');
+      flowerPower.readCalibratedSunlight(function(sunlight) {
+        console.log('calibrated sunlight = ' + sunlight.toFixed(2));
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedEa');
+      flowerPower.readCalibratedEa(function(ea) {
+        console.log('calibrated EA = ' + ea);
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedEcb');
+      flowerPower.readCalibratedEcb(function(ecb) {
+        console.log('calibrated ECB = ' + ecb);
+
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('readCalibratedEcPorous');
+      flowerPower.readCalibratedEcPorous(function(ecPorous) {
+        console.log('calibrated EC porous = ' + ecPorous);
 
         callback();
       });
