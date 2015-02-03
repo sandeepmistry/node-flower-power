@@ -105,13 +105,13 @@ flowerPower.readCalibratedSoilMoisture(callback(soilMoisture)); // %
 
 flowerPower.readCalibratedAirTemperature(callback(temperature)); // C
 
-flowerPower.readCalibratedSunlight(callback(sunlight)); // photons per square meter
+flowerPower.readCalibratedSunlight(callback(sunlight)); // photons per square meter (mol/m²/d)
 
-flowerPower.readCalibratedEa(callback(ea));
+flowerPower.readCalibratedEa(callback(ea)); // no units
 
-flowerPower.readCalibratedEcb(callback(ecb));
+flowerPower.readCalibratedEcb(callback(ecb)); // dS/m
 
-flowerPower.readCalibratedEcPorous(callback(ecPorous));
+flowerPower.readCalibratedEcPorous(callback(ecPorous)); // dS/m
 ```
 
 __Live mode__
