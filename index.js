@@ -328,11 +328,11 @@ FlowerPower.prototype.onCalibratedEcPorousChange = function(value) {
 };
 
 FlowerPower.prototype.notifyCalibratedEcPorous = function(callback) {
-  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, true, this.onCalibratedEcbChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, true, this.onCalibratedEcPorousChange.bind(this), callback);
 };
 
 FlowerPower.prototype.unnotifyCalibratedEcPorous = function(callback) {
-  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, false, this.onCalibratedEcbChange.bind(this), callback);
+  this.notifyCharacteristic(LIVE_SERVICE_UUID, CALIBRATED_EC_POROUS_UUID, false, this.onCalibratedEcPorousChange.bind(this), callback);
 };
 
 FlowerPower.prototype.enableLiveModeWithPeriod = function(period, callback) {
