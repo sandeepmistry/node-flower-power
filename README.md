@@ -211,7 +211,7 @@ TODO
     * ~~sunlight~~
     * ~~temperature~~
     * ~~soil moisture~~
-  * read fertilizer
+  * ~~read fertilizer~~
   * read historic data
     * sunlight
     * temperature

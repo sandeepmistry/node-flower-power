@@ -16,9 +16,9 @@ FlowerPower.discover(function(flowerPower) {
         console.log('sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
       });
 
-      flowerPower.on('soilElectricalConductivityChange', function(soilElectricalConductivity) {
-        console.log('soil electrical conductivity = ' + soilElectricalConductivity.toFixed(2));
-      });
+      // flowerPower.on('soilElectricalConductivityChange', function(soilElectricalConductivity) {
+      //   console.log('soil electrical conductivity = ' + soilElectricalConductivity.toFixed(2));
+      // });
 
       flowerPower.on('soilTemperatureChange', function(temperature) {
         console.log('soil temperature = ' + temperature.toFixed(2) + '°C');
@@ -132,14 +132,14 @@ FlowerPower.discover(function(flowerPower) {
         callback();
       });
     },
-    function(callback) {
-      console.log('readSoilElectricalConductivity');
-      flowerPower.readSoilElectricalConductivity(function(soilElectricalConductivity) {
-        console.log('soil electrical conductivity = ' + soilElectricalConductivity.toFixed(2));
+    // function(callback) {
+    //   console.log('readSoilElectricalConductivity');
+    //   flowerPower.readSoilElectricalConductivity(function(soilElectricalConductivity) {
+    //     console.log('soil electrical conductivity = ' + soilElectricalConductivity.toFixed(2));
 
-        callback();
-      });
-    },
+    //     callback();
+    //   });
+    // },
     function(callback) {
       console.log('readSoilTemperature');
       flowerPower.readSoilTemperature(function(temperature) {
