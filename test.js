@@ -2,6 +2,8 @@ var async = require('async');
 
 var FlowerPower = require('./index');
 
+var hasCalibratedData = false;
+
 FlowerPower.discover(function(flowerPower) {
   async.series([
     function(callback) {
@@ -75,6 +77,11 @@ FlowerPower.discover(function(flowerPower) {
       console.log('readFirmwareRevision');
       flowerPower.readFirmwareRevision(function(firmwareRevision) {
         console.log('\tfirmware revision = ' + firmwareRevision);
+
+        var version = firmwareRevision.split('_')[1].split('-')[1];
+
+        hasCalibratedData = (version >= '1.1.0');
+
         callback();
       });
     },
@@ -158,52 +165,63 @@ FlowerPower.discover(function(flowerPower) {
       });
     },
     function(callback) {
-      console.log('readCalibratedSoilMoisture');
-      flowerPower.readCalibratedSoilMoisture(function(soilMoisture) {
-        console.log('calibrated soil moisture = ' + soilMoisture.toFixed(2) + '%');
+      if (hasCalibratedData) {
+        async.series([
+          function(callback) {
+            console.log('readCalibratedSoilMoisture');
+            flowerPower.readCalibratedSoilMoisture(function(soilMoisture) {
+              console.log('calibrated soil moisture = ' + soilMoisture.toFixed(2) + '%');
 
-        callback();
-      });
-    },
-    function(callback) {
-      console.log('readCalibratedAirTemperature');
-      flowerPower.readCalibratedAirTemperature(function(temperature) {
-        console.log('calibrated air temperature = ' + temperature.toFixed(2) + '°C');
+              callback();
+            });
+          },
+          function(callback) {
+            console.log('readCalibratedAirTemperature');
+            flowerPower.readCalibratedAirTemperature(function(temperature) {
+              console.log('calibrated air temperature = ' + temperature.toFixed(2) + '°C');
 
-        callback();
-      });
-    },
-    function(callback) {
-      console.log('readCalibratedSunlight');
-      flowerPower.readCalibratedSunlight(function(sunlight) {
-        console.log('calibrated sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
+              callback();
+            });
+          },
+          function(callback) {
+            console.log('readCalibratedSunlight');
+            flowerPower.readCalibratedSunlight(function(sunlight) {
+              console.log('calibrated sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
 
-        callback();
-      });
-    },
-    function(callback) {
-      console.log('readCalibratedEa');
-      flowerPower.readCalibratedEa(function(ea) {
-        console.log('calibrated EA = ' + ea.toFixed(2));
+              callback();
+            });
+          },
+          function(callback) {
+            console.log('readCalibratedEa');
+            flowerPower.readCalibratedEa(function(ea) {
+              console.log('calibrated EA = ' + ea.toFixed(2));
 
-        callback();
-      });
-    },
-    function(callback) {
-      console.log('readCalibratedEcb');
-      flowerPower.readCalibratedEcb(function(ecb) {
-        console.log('calibrated ECB = ' + ecb.toFixed(2) + ' dS/m');
+              callback();
+            });
+          },
+          function(callback) {
+            console.log('readCalibratedEcb');
+            flowerPower.readCalibratedEcb(function(ecb) {
+              console.log('calibrated ECB = ' + ecb.toFixed(2) + ' dS/m');
 
-        callback();
-      });
-    },
-    function(callback) {
-      console.log('readCalibratedEcPorous');
-      flowerPower.readCalibratedEcPorous(function(ecPorous) {
-        console.log('calibrated EC porous = ' + ecPorous.toFixed(2) + ' dS/m');
+              callback();
+            });
+          },
+          function(callback) {
+            console.log('readCalibratedEcPorous');
+            flowerPower.readCalibratedEcPorous(function(ecPorous) {
+              console.log('calibrated EC porous = ' + ecPorous.toFixed(2) + ' dS/m');
 
+              callback();
+            });
+          },
+          function() {
+            callback();
+          }
+        ]);
+      } else {
         callback();
-      });
+      }
     },
     function(callback) {
       console.log('enableLiveMode');
@@ -218,16 +236,27 @@ FlowerPower.discover(function(flowerPower) {
       flowerPower.disableLiveMode(callback);
     },
     function(callback) {
-      console.log('enableCalibratedLiveMode');
-      flowerPower.enableCalibratedLiveMode(callback);
-    },
-    function(callback) {
-      console.log('calibrated live mode');
-      setTimeout(callback, 5000);
-    },
-    function(callback) {
-      console.log('disableCalibratedLiveMode');
-      flowerPower.disableCalibratedLiveMode(callback);
+      if (hasCalibratedData) {
+        async.series([
+          function(callback) {
+            console.log('enableCalibratedLiveMode');
+            flowerPower.enableCalibratedLiveMode(callback);
+          },
+          function(callback) {
+            console.log('calibrated live mode');
+            setTimeout(callback, 5000);
+          },
+          function(callback) {
+            console.log('disableCalibratedLiveMode');
+            flowerPower.disableCalibratedLiveMode(callback);
+          },
+          function() {
+            callback();
+          }
+        ]);
+      } else {
+        callback();
+      }
     },
     function(callback) {
       console.log('ledPulse');
