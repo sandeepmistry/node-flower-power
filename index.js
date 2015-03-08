@@ -39,17 +39,15 @@ var HISTORY_CURRENT_SESSION_PERIOD_UUID     = '39e1fc0684a811e2afba0002a5d5c51b'
 function FlowerPower(peripheral) {
   NobleDevice.call(this, peripheral);
 
-  this._peripheral = peripheral;
-  this._services = {};
-  this._characteristics = {};
   this.uuid = peripheral.uuid;
   this.name = peripheral.advertisement.localName;
+
   var flags = peripheral.advertisement.manufacturerData.readUInt8(0);
-  this.flags={};
-  this.flags.hasEntry = ((flags & (1<<0)) !== 0);
-  this.flags.hasMoved = ((flags & (1<<1)) !== 0);
-  this.flags.isStarting = ((flags & (1<<2)) !== 0);
-  this._peripheral.on('disconnect', this.onDisconnect.bind(this));
+  this.flags = {
+    hasEntry: (flags & 0x01) !== 0,
+    hasMoved: (flags & 0x02) !== 0,
+    isStarting: (flags & 0x04) !== 0
+  };
 
 }
 
@@ -68,7 +66,8 @@ FlowerPower.SCAN_UUIDS = [LIVE_SERVICE_UUID];
 FlowerPower.prototype.toString = function() {
   return JSON.stringify({
     uuid: this.uuid,
-    name: this.name
+    name: this.name,
+    flags, this.flags
   });
 };
 
