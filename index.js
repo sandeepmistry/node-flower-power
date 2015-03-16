@@ -23,6 +23,8 @@ var CALIBRATED_EC_POROUS_UUID               = '39e1fa0e84a811e2afba0002a5d5c51b'
 
 var FRIENDLY_NAME_UUID                      = '39e1fe0384a811e2afba0002a5d5c51b';
 var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b';
+var CLOCK_SERVICE_UUID                      = '39e1fd0084a811e2afba0002a5d5c51b';
+var CLOCK_CURRENT_TIME_UUID                 = '39e1fd0184a811e2afba0002a5d5c51b';
 
 var UPLOAD_SERVICE_UUID                     = '39e1fb0084a811e2afba0002a5d5c51b';
 var UPLOAD_TX_BUFFER_UUID                   = '39e1fb0184a811e2afba0002a5d5c51b';
@@ -35,6 +37,8 @@ var HISTORY_TRANSFER_START_IDX_UUID         = '39e1fc0384a811e2afba0002a5d5c51b'
 var HISTORY_CURRENT_SESSION_ID_UUID         = '39e1fc0484a811e2afba0002a5d5c51b';
 var HISTORY_CURRENT_SESSION_START_IDX_UUID  = '39e1fc0584a811e2afba0002a5d5c51b';
 var HISTORY_CURRENT_SESSION_PERIOD_UUID     = '39e1fc0684a811e2afba0002a5d5c51b';
+
+var maxBufferSize = 128;
 
 function FlowerPower(peripheral) {
   NobleDevice.call(this, peripheral);
@@ -522,7 +526,14 @@ function Upload(fp, callback) {
 
 Upload.prototype.onWaitingAck = function(callback) {
 	var success = true;
-	for (var idx=this.currentIdx; ((idx < this.currentIdx+128) && (idx < this.nbTotalBuffers)); idx++) {
+    var packetSize;
+    if (this.nbTotalBuffers > maxBufferSize) {
+        packetSize = maxBufferSize;
+    }
+    else {
+	    packetSize = this.nbTotalBuffers;
+	}
+	for (var idx=this.currentIdx; idx < packetSize; idx++) {
 		if (idx>0){
 			if (!this.buffers.hasOwnProperty(idx)){
 				success = false;
@@ -531,15 +542,18 @@ Upload.prototype.onWaitingAck = function(callback) {
 		}
 	}
 	if (success === true) {
-		this.currentIdx += 128;
-		if (this.currentIdx >= this.nbTotalBuffers){
-			this.historyFile = Buffer.concat( this.buffers.slice(1), this.fileLength);
-		}
-		else{
+        this.historyFile = Buffer.concat( this.buffers.slice(1), this.fileLength);
+	    if (idx < this.nbTotalBuffers) {
 			async.series([
 				this.notifyTxStatus.bind(this),
 				this.notifyTxBuffer.bind(this),
-				this.writeRxStatus.bind(this, this.RxStatusEnum.ACK), 
+				this.writeRxStatus.bind(this, this.RxStatusEnum.ACK)]);
+	    }
+	    else {
+            async.series([
+                this.notifyTxStatus.bind(this),
+				this.notifyTxBuffer.bind(this),
+				this.writeRxStatus.bind(this, this.RxStatusEnum.ACK),
 				this.notifyTxStatus.bind(this),
 				this.notifyTxBuffer.bind(this),
 				this.writeRxStatus.bind(this, this.RxStatusEnum.STANDBY)]);
@@ -558,7 +572,7 @@ Upload.prototype.onTxStatusChange = function (data) {
 	}
 	if(this.txStatus === this.TxStatusEnum.IDLE) {
 			if (this.historyFile !== null) {
-				this.finishCallback(null, this.historyFile.toString('hex'));
+				this.finishCallback(null, this.historyFile.toString('base64'));
 				return;
 			}
 			else {
