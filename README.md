@@ -193,6 +193,7 @@ flowerPower.on('calibratedEcPorousChange', callback(ecPorous));
 
 TODO
 ----
+complete :)
 
   * ~~discover~~
   * ~~connect~~
@@ -212,10 +213,10 @@ TODO
     * ~~temperature~~
     * ~~soil moisture~~
   * ~~read fertilizer~~
-  * read historic data
-    * sunlight
-    * temperature
-    * soil moisture
-    * fertizler
+  * ~~read historic data~~
+    * ~~sunlight~~
+    * ~~temperature~~
+    * ~~soil moisture~~
+    * ~~fertizler~~
   * ~~__use calculations to convert values__ (currently using lookup table)~~
 
