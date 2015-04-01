@@ -1,5 +1,6 @@
 var events = require('events');
 var util = require('util');
+var async = require('async');
 
 var NobleDevice = require('noble-device');
 
