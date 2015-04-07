@@ -1,6 +1,6 @@
 {
   "name": "flower-power",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "node.js lib for the Parrot Flower Power",
   "main": "index.js",
   "scripts": {
