@@ -28,6 +28,6 @@
   },
   "dependencies": {
     "noble": "~0.3.6",
-    "noble-device": "^0.1.2"
+    "noble-device": "^1.0.0"
   }
 }

@@ -66,7 +66,11 @@ FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
 };
 
 FlowerPower.prototype.readColor = function(callback) {
-  this.readDataCharacteristic(CALIBRATION_SERVICE_UUID, COLOR_UUID, function(data) {
+  this.readDataCharacteristic(CALIBRATION_SERVICE_UUID, COLOR_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var colorCode = data.readUInt16LE(0);
 
     var COLOR_CODE_MAPPER = {
@@ -77,7 +81,7 @@ FlowerPower.prototype.readColor = function(callback) {
 
     var color = COLOR_CODE_MAPPER[colorCode] || 'unknown';
 
-    callback(color);
+    callback(null, color);
   }.bind(this));
 };
 
@@ -90,10 +94,14 @@ FlowerPower.prototype.convertSunlightData = function(data) {
 };
 
 FlowerPower.prototype.readSunlight = function(callback) {
-  this.readDataCharacteristic(LIVE_SERVICE_UUID, SUNLIGHT_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SUNLIGHT_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var sunlight = this.convertSunlightData(data);
 
-    callback(sunlight);
+    callback(error, sunlight);
   }.bind(this));
 };
 
@@ -121,10 +129,14 @@ FlowerPower.prototype.convertSoilElectricalConductivityData = function(data) {
 };
 
 FlowerPower.prototype.readSoilElectricalConductivity = function(callback) {
-  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var soilEC = this.convertSoilElectricalConductivityData(data);
 
-    callback(soilEC);
+    callback(null, soilEC);
   }.bind(this));
 };
 
@@ -157,10 +169,14 @@ FlowerPower.prototype.convertTemperatureData = function(data) {
 };
 
 FlowerPower.prototype.readSoilTemperature = function(callback) {
-  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_TEMPERATURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_TEMPERATURE_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var temperature = this.convertTemperatureData(data);
 
-    callback(temperature);
+    callback(null, temperature);
   }.bind(this));
 };
 
@@ -179,10 +195,14 @@ FlowerPower.prototype.unnotifySoilTemperature = function(callback) {
 };
 
 FlowerPower.prototype.readAirTemperature = function(callback) {
-  this.readDataCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var temperature = this.convertTemperatureData(data);
 
-    callback(temperature);
+    callback(null, temperature);
   }.bind(this));
 };
 
@@ -199,7 +219,6 @@ FlowerPower.prototype.notifyAirTemperature = function(callback) {
 FlowerPower.prototype.unnotifyAirTemperature = function(callback) {
   this.notifyCharacteristic(LIVE_SERVICE_UUID, AIR_TEMPERATURE_UUID, false, this.onAirTemperatureChange.bind(this), callback);
 };
-
 
 FlowerPower.prototype.convertSoilMoistureData = function(data) {
   var rawValue = data.readUInt16LE(0) * 1.0;
@@ -218,10 +237,14 @@ FlowerPower.prototype.convertSoilMoistureData = function(data) {
 };
 
 FlowerPower.prototype.readSoilMoisture = function(callback) {
-  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, function(data) {
+  this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_MOISTURE_UUID, function(error, data) {
+    if (error) {
+      return callback(error);
+    }
+
     var soilMoisture = this.convertSoilMoistureData(data);
 
-    callback(soilMoisture);
+    callback(null, soilMoisture);
   }.bind(this));
 };
 

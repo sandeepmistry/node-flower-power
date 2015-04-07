@@ -61,21 +61,21 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readSystemId');
-      flowerPower.readSystemId(function(systemId) {
+      flowerPower.readSystemId(function(error, systemId) {
         console.log('\tsystem id = ' + systemId);
         callback();
       });
     },
     function(callback) {
       console.log('readSerialNumber');
-      flowerPower.readSerialNumber(function(serialNumber) {
+      flowerPower.readSerialNumber(function(error, serialNumber) {
         console.log('\tserial number = ' + serialNumber);
         callback();
       });
     },
     function(callback) {
       console.log('readFirmwareRevision');
-      flowerPower.readFirmwareRevision(function(firmwareRevision) {
+      flowerPower.readFirmwareRevision(function(error, firmwareRevision) {
         console.log('\tfirmware revision = ' + firmwareRevision);
 
         var version = firmwareRevision.split('_')[1].split('-')[1];
@@ -87,21 +87,21 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readHardwareRevision');
-      flowerPower.readHardwareRevision(function(hardwareRevision) {
+      flowerPower.readHardwareRevision(function(error, hardwareRevision) {
         console.log('\thardware revision = ' + hardwareRevision);
         callback();
       });
     },
     function(callback) {
       console.log('readManufacturerName');
-      flowerPower.readManufacturerName(function(manufacturerName) {
+      flowerPower.readManufacturerName(function(error, manufacturerName) {
         console.log('\tmanufacturer name = ' + manufacturerName);
         callback();
       });
     },
     function(callback) {
       console.log('readBatteryLevel');
-      flowerPower.readBatteryLevel(function(batteryLevel) {
+      flowerPower.readBatteryLevel(function(error, batteryLevel) {
         console.log('battery level = ' + batteryLevel);
 
         callback();
@@ -109,7 +109,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readFriendlyName');
-      flowerPower.readFriendlyName(function(friendlyName) {
+      flowerPower.readFriendlyName(function(error, friendlyName) {
         console.log('\tfriendly name = ' + friendlyName);
 
         console.log('writeFriendlyName');
@@ -118,7 +118,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readColor');
-      flowerPower.readColor(function(color) {
+      flowerPower.readColor(function(error, color) {
         console.log('\tcolor = ' + color);
 
         callback();
@@ -126,7 +126,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readSunlight');
-      flowerPower.readSunlight(function(sunlight) {
+      flowerPower.readSunlight(function(error, sunlight) {
         console.log('sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
 
         callback();
@@ -134,7 +134,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     // function(callback) {
     //   console.log('readSoilElectricalConductivity');
-    //   flowerPower.readSoilElectricalConductivity(function(soilElectricalConductivity) {
+    //   flowerPower.readSoilElectricalConductivity(function(error, soilElectricalConductivity) {
     //     console.log('soil electrical conductivity = ' + soilElectricalConductivity.toFixed(2));
 
     //     callback();
@@ -142,7 +142,7 @@ FlowerPower.discover(function(flowerPower) {
     // },
     function(callback) {
       console.log('readSoilTemperature');
-      flowerPower.readSoilTemperature(function(temperature) {
+      flowerPower.readSoilTemperature(function(error, temperature) {
         console.log('soil temperature = ' + temperature.toFixed(2) + '°C');
 
         callback();
@@ -150,7 +150,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readAirTemperature');
-      flowerPower.readAirTemperature(function(temperature) {
+      flowerPower.readAirTemperature(function(error, temperature) {
         console.log('air temperature = ' + temperature.toFixed(2) + '°C');
 
         callback();
@@ -158,7 +158,7 @@ FlowerPower.discover(function(flowerPower) {
     },
     function(callback) {
       console.log('readSoilMoisture');
-      flowerPower.readSoilMoisture(function(soilMoisture) {
+      flowerPower.readSoilMoisture(function(error, soilMoisture) {
         console.log('soil moisture = ' + soilMoisture.toFixed(2) + '%');
 
         callback();
@@ -169,7 +169,7 @@ FlowerPower.discover(function(flowerPower) {
         async.series([
           function(callback) {
             console.log('readCalibratedSoilMoisture');
-            flowerPower.readCalibratedSoilMoisture(function(soilMoisture) {
+            flowerPower.readCalibratedSoilMoisture(function(error, soilMoisture) {
               console.log('calibrated soil moisture = ' + soilMoisture.toFixed(2) + '%');
 
               callback();
@@ -177,7 +177,7 @@ FlowerPower.discover(function(flowerPower) {
           },
           function(callback) {
             console.log('readCalibratedAirTemperature');
-            flowerPower.readCalibratedAirTemperature(function(temperature) {
+            flowerPower.readCalibratedAirTemperature(function(error, temperature) {
               console.log('calibrated air temperature = ' + temperature.toFixed(2) + '°C');
 
               callback();
@@ -185,7 +185,7 @@ FlowerPower.discover(function(flowerPower) {
           },
           function(callback) {
             console.log('readCalibratedSunlight');
-            flowerPower.readCalibratedSunlight(function(sunlight) {
+            flowerPower.readCalibratedSunlight(function(error, sunlight) {
               console.log('calibrated sunlight = ' + sunlight.toFixed(2) + ' mol/m²/d');
 
               callback();
@@ -193,7 +193,7 @@ FlowerPower.discover(function(flowerPower) {
           },
           function(callback) {
             console.log('readCalibratedEa');
-            flowerPower.readCalibratedEa(function(ea) {
+            flowerPower.readCalibratedEa(function(error, ea) {
               console.log('calibrated EA = ' + ea.toFixed(2));
 
               callback();
@@ -201,7 +201,7 @@ FlowerPower.discover(function(flowerPower) {
           },
           function(callback) {
             console.log('readCalibratedEcb');
-            flowerPower.readCalibratedEcb(function(ecb) {
+            flowerPower.readCalibratedEcb(function(error, ecb) {
               console.log('calibrated ECB = ' + ecb.toFixed(2) + ' dS/m');
 
               callback();
@@ -209,7 +209,7 @@ FlowerPower.discover(function(flowerPower) {
           },
           function(callback) {
             console.log('readCalibratedEcPorous');
-            flowerPower.readCalibratedEcPorous(function(ecPorous) {
+            flowerPower.readCalibratedEcPorous(function(error, ecPorous) {
               console.log('calibrated EC porous = ' + ecPorous.toFixed(2) + ' dS/m');
 
               callback();
