@@ -23,7 +23,11 @@ var FlowerPower = require('flower-power');
 __Discover__
 
 ```javascript
+// Discover one Flower Power
 FlowerPower.discover(callback(flowerPower));
+
+// Discover all Flower Power's
+FlowerPower.discoverAll(callback(flowerPower));
 ```
 
 __Connect and Setup__
