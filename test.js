@@ -4,6 +4,17 @@ var FlowerPower = require('./index');
 
 var hasCalibratedData = false;
 
+var fs  = require("fs");
+
+var NbrEntrees;
+var lastEntry;
+var currentID;
+var sessionStartIndex;
+var sessionPeriod;
+var sUpTime;
+var startIdx;
+
+
 FlowerPower.discover(function(flowerPower) {
   async.series([
     function(callback) {
@@ -258,6 +269,62 @@ FlowerPower.discover(function(flowerPower) {
         callback();
       }
     },
+    function(callback) {
+      console.log('getHistoryNbEntries');
+      flowerPower.getHistoryNbEntries(function(data) {
+		NbrEntrees = data;
+        callback();
+      });
+    }, 
+    function(callback) {
+      console.log('getHistoryLastEntryIdx');
+      flowerPower.getHistoryLastEntryIdx(function(data) {
+		lastEntry = data;
+        callback();
+      });
+    },
+    function(callback) {
+      console.log('getHistoryCurrentSessionID');
+      flowerPower.getHistoryCurrentSessionID(function(data) {
+		currentID = data;
+        callback();
+      });
+    }, 
+    function(callback) {
+      console.log('getHistoryCurrentSessionStartIdx');
+      flowerPower.getHistoryCurrentSessionStartIdx(function(data) {
+		sessionStartIndex = data;
+        callback();
+      });
+    }, 
+    function(callback) {
+      console.log('getHistoryCurrentSessionPeriod');
+      flowerPower.getHistoryCurrentSessionPeriod(function(data) {
+		sessionPeriod = data;
+        callback();
+      });
+    }, 
+    function(callback) {
+      console.log('getStartUpTime');
+      	flowerPower.getStartupTime(function(startupTime) {
+		sUpTime = startupTime;
+        callback();
+      });
+    },
+    function(callback) { 
+      startIdx = lastEntry - 200;
+      	flowerPower.getHistory(startIdx, function(error, history) {
+        	console.log('History received : ' + history);
+			historic = history;
+        	callback();
+      	});
+    }, 
+	function (callback) {
+		fs.appendFile(flowerPower.uuid+'.txt', historic, function (err) {
+  			if (err) throw err;
+			callback();
+		});					
+	},  
     function(callback) {
       console.log('ledPulse');
       flowerPower.ledPulse(callback);
