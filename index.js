@@ -27,7 +27,6 @@ var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b'
 function FlowerPower(peripheral) {
   NobleDevice.call(this, peripheral);
 
-  this.uuid = peripheral.uuid;
   this.name = peripheral.advertisement.localName;
 }
 
@@ -45,7 +44,7 @@ FlowerPower.SCAN_UUIDS = [LIVE_SERVICE_UUID];
 
 FlowerPower.prototype.toString = function() {
   return JSON.stringify({
-    uuid: this.uuid,
+    id: this.id,
     name: this.name
   });
 };
