@@ -23,77 +23,81 @@ var FlowerPower = require('flower-power');
 __Discover__
 
 ```javascript
+// Discover one Flower Power
 FlowerPower.discover(callback(flowerPower));
+
+// Discover all Flower Power's
+FlowerPower.discoverAll(callback(flowerPower));
 ```
 
 __Connect and Setup__
 
 ```javascript
-flowerPower.connectAndSetup(callback);
+flowerPower.connectAndSetup(callback(error));
 ```
 
 __Disconnect__
 
 ```javascript
-flowerPower.disconnect(callback);
+flowerPower.disconnect(callback(error));
 ```
 
 __Device Info__
 
 ```javascript
-flowerPower.readSystemId(callback(systemId));
+flowerPower.readSystemId(callback(error, systemId));
 
-flowerPower.readSerialNumber(callback(serialNumber));
+flowerPower.readSerialNumber(callback(error, serialNumber));
 
-flowerPower.readFirmwareRevision(callback(firmwareRevision));
+flowerPower.readFirmwareRevision(callback(error, firmwareRevision));
 
-flowerPower.readHardwareRevision(callback(hardwareRevision));
+flowerPower.readHardwareRevision(callback(error, hardwareRevision));
 
-flowerPower.readManufacturerName(callback(manufacturerName));
+flowerPower.readManufacturerName(callback(error, manufacturerName));
 ```
 
 __Other Info__
 
 ```javascript
-flowerPower.readFriendlyName(callback(friendlyName));
+flowerPower.readFriendlyName(callback(error, friendlyName));
 
-flowerPower.writeFriendlyName(friendlyName, callback);
+flowerPower.writeFriendlyName(friendlyName, callback(error));
 
 
-flowerPower.readColor(callback(color));
+flowerPower.readColor(callback(error, color));
 ```
 
 __Battery Level__
 
 ```javascript
 // batteryLevel range is 0 - 100
-flowerPower.readBatteryLevel(callback(batteryLevel));
+flowerPower.readBatteryLevel(callback(error, batteryLevel));
 ```
 
 __Sunlight__
 
 ```javascript
 // sunlight units are photons per square meter
-flowerPower.readSunlight(callback(sunlight));
+flowerPower.readSunlight(callback(error, sunlight));
 ```
 
 __Soil Temperature__
 
 ```javascript
-flowerPower.readSoilTemperature(callback(temperature)); // C
+flowerPower.readSoilTemperature(callback(error, temperature)); // C
 ```
 
 __Air Temperature__
 
 ```javascript
-flowerPower.readAirTemperature(callback(temperature)); // C
+flowerPower.readAirTemperature(callback(error, temperature)); // C
 ```
 
 __Soil Moisture__
 
 ```javascript
 // soilMoisture units is percentage (%)
-flowerPower.readSoilMoisture(callback(soilMoisture));
+flowerPower.readSoilMoisture(callback(error, soilMoisture));
 ```
 
 __Calibrated__
@@ -101,17 +105,17 @@ __Calibrated__
 ```javascript
 // firmware versions 1.1 and above
 
-flowerPower.readCalibratedSoilMoisture(callback(soilMoisture)); // %
+flowerPower.readCalibratedSoilMoisture(callback(error, soilMoisture)); // %
 
-flowerPower.readCalibratedAirTemperature(callback(temperature)); // C
+flowerPower.readCalibratedAirTemperature(callback(error, temperature)); // C
 
-flowerPower.readCalibratedSunlight(callback(sunlight)); // photons per square meter (mol/m²/d)
+flowerPower.readCalibratedSunlight(callback(error, sunlight)); // photons per square meter (mol/m²/d)
 
-flowerPower.readCalibratedEa(callback(ea)); // no units
+flowerPower.readCalibratedEa(callback(error, ea)); // no units
 
-flowerPower.readCalibratedEcb(callback(ecb)); // dS/m
+flowerPower.readCalibratedEcb(callback(error, ecb)); // dS/m
 
-flowerPower.readCalibratedEcPorous(callback(ecPorous)); // dS/m
+flowerPower.readCalibratedEcPorous(callback(error, ecPorous)); // dS/m
 ```
 
 __Live mode__
@@ -120,9 +124,9 @@ __Live mode__
 // sunlightChange, soilTemperatureChange, airTemperatureChange,
 // soilMoistureChange events are emitted (see below)
 
-flowerPower.enableLiveMode(callback);
+flowerPower.enableLiveMode(callback(error));
 
-flowerPower.disableLiveMode(callback);
+flowerPower.disableLiveMode(callback(error));
 ```
 
 __Calibrated live mode__
@@ -134,17 +138,17 @@ __Calibrated live mode__
 // calibratedSunlightChange, calibratedEaChange, calibratedEcbChange,
 // calibratedEcPorousChange events are emitted (see below)
 
-flowerPower.enableCalibratedLiveMode(callback);
+flowerPower.enableCalibratedLiveMode(callback(error));
 
-flowerPower.disableCalibratedLiveMode(callback);
+flowerPower.disableCalibratedLiveMode(callback(error));
 ```
 
 __LED__
 
 ```javascript
-flowerPower.ledFade(callback);
+flowerPower.ledFade(callback(error));
 
-flowerPower.ledOff(callback);
+flowerPower.ledOff(callback(error));
 ```
 
 Events
@@ -193,7 +197,6 @@ flowerPower.on('calibratedEcPorousChange', callback(ecPorous));
 
 TODO
 ----
-complete :)
 
   * ~~discover~~
   * ~~connect~~
@@ -213,10 +216,10 @@ complete :)
     * ~~temperature~~
     * ~~soil moisture~~
   * ~~read fertilizer~~
-  * ~~read historic data~~
-    * ~~sunlight~~
-    * ~~temperature~~
-    * ~~soil moisture~~
-    * ~~fertizler~~
+  * read historic data
+    * sunlight
+    * temperature
+    * soil moisture
+    * fertizler
   * ~~__use calculations to convert values__ (currently using lookup table)~~
 
