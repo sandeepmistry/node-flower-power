@@ -1,6 +1,6 @@
 {
   "name": "flower-power",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "node.js lib for the Parrot Flower Power",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,6 @@
     "bleno": "~0.1.8"
   },
   "dependencies": {
-    "noble": "~0.3.6",
-    "noble-device": "^0.1.2"
+    "noble-device": "^1.1.0"
   }
 }
