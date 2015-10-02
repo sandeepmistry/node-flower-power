@@ -55,6 +55,7 @@ function FlowerPower(peripheral) {
   var self = this;
   this._peripheral.on('disconnect', function () {
     self._peripheral.removeAllListeners('disconnect');
+    self._peripheral.removeAllListeners('connect');
   });
 
 }
