@@ -547,14 +547,9 @@ Upload.prototype.onWaitingAck = function(callback) {
         this.writeRxStatus.bind(this, this.RxStatusEnum.STANDBY)]);
       }
       else{
-        // need to test
         async.series([
-          this.notifyTxStatus.bind(this),
-          this.notifyTxBuffer.bind(this),
-          this.writeRxStatus.bind(this, this.RxStatusEnum.ACK),
-          this.notifyTxStatus.bind(this),
-          this.notifyTxBuffer.bind(this),
-          this.writeRxStatus.bind(this, this.RxStatusEnum.STANDBY)]);
+          this.writeRxStatus.bind(this, this.RxStatusEnum.ACK)
+        ]);
         }
       }
       else {
@@ -569,7 +564,7 @@ Upload.prototype.onWaitingAck = function(callback) {
         this.onWaitingAck();
       }
       if(this.txStatus === this.TxStatusEnum.IDLE) {
-        if (this.historyFile !== null) {
+        if (this.historyFile !== null && typeof this.historyFile !== 'undefined') {
           this.finishCallback(null, this.historyFile.toString('base64'));
           return;
         }
