@@ -54,8 +54,7 @@ function FlowerPower(peripheral) {
   this.flags.isStarting = ((flags & (1<<2)) !== 0);
   var self = this;
   this._peripheral.on('disconnect', function () {
-    self._peripheral.removeAllListeners('disconnect');
-    self._peripheral.removeAllListeners('connect');
+    self._peripheral.removeAllListeners();
   });
 
 }
@@ -439,35 +438,35 @@ FlowerPower.prototype.disableCalibratedLiveMode = function(callback) {
 FlowerPower.prototype.getHistoryNbEntries = function(callback) {
   this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_NB_ENTRIES_UUID, function (error, data) {
     var data = data.readUInt16LE(0);
-    callback(data);
+    callback(error, data);
   }.bind(this));
 };
 
 FlowerPower.prototype.getHistoryLastEntryIdx = function(callback) {
   this.readDataCharacteristic(HISTORY_SERVICE_UUID,HISTORY_LASTENTRY_IDX_UUID, function (error, data) {
     var data = data.readUInt32LE(0);
-    callback(data);
+    callback(error, data);
   }.bind(this));
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionID = function(callback) {
   this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_ID_UUID, function (error, data) {
     var data = data.readUInt16LE(0);
-    callback(data);
+    callback(error, data);
   }.bind(this));
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionStartIdx = function(callback) {
   this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_START_IDX_UUID, function (error, data) {
     var data = data.readUInt32LE(0);
-    callback(data);
+    callback(error, data);
   }.bind(this));
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionPeriod = function(callback) {
   this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_PERIOD_UUID, function (error, data) {
     var data = data.readUInt16LE(0);
-    callback(data);
+    callback(error, data);
   }.bind(this));
 };
 
@@ -484,7 +483,7 @@ FlowerPower.prototype.getStartupTime = function (callback) {
     } else {
       var startupTime = new Date();
       startupTime.setTime (startupTime.getTime() - data.readUInt32LE(0)*1000);
-      callback(startupTime);
+      callback(null, startupTime);
     }
   });
 };
