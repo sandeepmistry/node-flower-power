@@ -52,11 +52,6 @@ function FlowerPower(peripheral) {
   this.flags.hasEntry = ((flags & (1<<0)) !== 0);
   this.flags.hasMoved = ((flags & (1<<1)) !== 0);
   this.flags.isStarting = ((flags & (1<<2)) !== 0);
-  var self = this;
-  this._peripheral.on('disconnect', function () {
-    self._peripheral.removeAllListeners();
-  });
-
 }
 
 NobleDevice.Util.inherits(FlowerPower, NobleDevice);
@@ -93,20 +88,27 @@ FlowerPower.prototype.writeFriendlyName = function(friendlyName, callback) {
   this.writeDataCharacteristic(CALIBRATION_SERVICE_UUID, FRIENDLY_NAME_UUID, data, callback);
 };
 
-FlowerPower.prototype.readColor = function(callback) {
-  this.readDataCharacteristic(CALIBRATION_SERVICE_UUID, COLOR_UUID, function(data) {
-    var colorCode = data.readUInt16LE(0);
-
-    var COLOR_CODE_MAPPER = {
-      4: 'brown',
-      6: 'green',
-      7: 'blue'
-    };
-
-    var color = COLOR_CODE_MAPPER[colorCode] || 'unknown';
-
-    callback(color);
+FlowerPower.prototype.readData = function(service, uuid, callback) {
+  this.readDataCharacteristic(service, uuid, function(error, data) {
+		if (error || !data) callback(error || 'Error: no data');
+		else callback(error, data);
   }.bind(this));
+};
+
+FlowerPower.prototype.readColor = function(callback) {
+	this.readData(CALIBRATION_SERVICE_UUID, COLOR_UUID, function(error, data) {
+		if (!error) {
+    	var colorCode = data.readUInt16LE(0);
+			var COLOR_CODE_MAPPER = {
+   	  	4: 'brown',
+   	  	6: 'green',
+   	  	7: 'blue'
+   	 	};
+			var color = COLOR_CODE_MAPPER[colorCode] || 'unknown';
+			callback(error, colorCode);
+		}
+		else callback(error);
+	});
 };
 
 FlowerPower.prototype.convertSunlightData = function(data) {
@@ -147,6 +149,8 @@ FlowerPower.prototype.convertSoilElectricalConductivityData = function(data) {
 
   return soilElectricalConductivity;
 };
+
+// All readDataCharacteristic need error
 
 FlowerPower.prototype.readSoilElectricalConductivity = function(callback) {
   this.readDataCharacteristic(LIVE_SERVICE_UUID, SOIL_EC_UUID, function(data) {
@@ -436,38 +440,53 @@ FlowerPower.prototype.disableCalibratedLiveMode = function(callback) {
 };
 
 FlowerPower.prototype.getHistoryNbEntries = function(callback) {
-  this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_NB_ENTRIES_UUID, function (error, data) {
-    var data = data.readUInt16LE(0);
-    callback(error, data);
-  }.bind(this));
+	this.readData(HISTORY_SERVICE_UUID, HISTORY_NB_ENTRIES_UUID, function (error, data) {
+		if (error) callback(error);
+		else {
+			var data = data.readUInt16LE(0);
+			callback(error, data);
+		}
+	});
 };
 
 FlowerPower.prototype.getHistoryLastEntryIdx = function(callback) {
-  this.readDataCharacteristic(HISTORY_SERVICE_UUID,HISTORY_LASTENTRY_IDX_UUID, function (error, data) {
-    var data = data.readUInt32LE(0);
-    callback(error, data);
-  }.bind(this));
+  this.readData(HISTORY_SERVICE_UUID,HISTORY_LASTENTRY_IDX_UUID, function (error, data) {
+		if (error) callback(error);
+		else {
+    	var data = data.readUInt32LE(0);
+    	callback(error, data);
+		}
+  });
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionID = function(callback) {
-  this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_ID_UUID, function (error, data) {
-    var data = data.readUInt16LE(0);
-    callback(error, data);
-  }.bind(this));
+  this.readData(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_ID_UUID, function (error, data) {
+		if (error) callback(error);
+		else {
+    	var data = data.readUInt16LE(0);
+    	callback(error, data);
+		}
+  });
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionStartIdx = function(callback) {
-  this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_START_IDX_UUID, function (error, data) {
-    var data = data.readUInt32LE(0);
-    callback(error, data);
-  }.bind(this));
+  this.readData(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_START_IDX_UUID, function (error, data) {
+		if (error) callback(error);
+		else {
+    	var data = data.readUInt32LE(0);
+    	callback(error, data);
+		}
+  });
 };
 
 FlowerPower.prototype.getHistoryCurrentSessionPeriod = function(callback) {
-  this.readDataCharacteristic(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_PERIOD_UUID, function (error, data) {
-    var data = data.readUInt16LE(0);
-    callback(error, data);
-  }.bind(this));
+  this.readData(HISTORY_SERVICE_UUID, HISTORY_CURRENT_SESSION_PERIOD_UUID, function (error, data) {
+		if (error) callback(error);
+		else {
+    	var data = data.readUInt16LE(0);
+    	callback(error, data);
+		}
+  });
 };
 
 FlowerPower.prototype.writeTxStartIdx = function (startIdx, callback) {
@@ -478,12 +497,11 @@ FlowerPower.prototype.writeTxStartIdx = function (startIdx, callback) {
 
 FlowerPower.prototype.getStartupTime = function (callback) {
   this.readDataCharacteristic(CLOCK_SERVICE_UUID, CLOCK_CURRENT_TIME_UUID, function (error, data) {
-    if (error !== null){
-      callback(error);
-    } else {
+    if (error) callback(error);
+    else {
       var startupTime = new Date();
       startupTime.setTime (startupTime.getTime() - data.readUInt32LE(0)*1000);
-      callback(null, startupTime);
+      callback(error, startupTime);
     }
   });
 };
