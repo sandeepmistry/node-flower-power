@@ -146,7 +146,7 @@ flowerPower.disableCalibratedLiveMode(callback(error));
 __LED__
 
 ```javascript
-flowerPower.ledFade(callback(error));
+flowerPower.ledPulse(callback(error));
 
 flowerPower.ledOff(callback(error));
 ```
