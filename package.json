@@ -1,33 +1,33 @@
 {
-	"name": "flower-power-ble",
-		"version": "0.3.1",
-		"description": "node.js/BLE lib to comminucate with Parrot Flower Power devices",
-		"main": "index.js",
-		"scripts": {
-			"test": "jshint *.js"
-		},
-		"repository": {
-			"type": "git",
-			"url": "git+https://github.com/Parrot-Developers/node-flower-power.git"
-		},
-		"keywords": [
-			"Parrot",
-		"Flower",
-		"Power",
-		"Flower Power"
-			],
-		"author": "Sandeep Mistry <sandeep.mistry@gmail.com>",
-		"license": "MIT",
-		"bugs": {
-			"url": "https://github.com/sandeepmistry/node-flower-power/issues"
-		},
-		"devDependencies": {
-			"jshint": "~2.3.0",
-			"async": "~0.2.9",
-			"bleno": "~0.1.8"
-		},
-		"dependencies": {
-			"noble-device": "^1.1.0"
-		},
-		"homepage": "https://github.com/sandeepmistry/node-flower-power#readme"
+  "name": "flower-power-ble",
+  "version": "0.3.2",
+  "description": "node.js/BLE lib to comminucate with Parrot Flower Power devices",
+  "main": "index.js",
+  "scripts": {
+    "test": "jshint *.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Parrot-Developers/node-flower-power.git"
+  },
+  "keywords": [
+    "Parrot",
+    "Flower",
+    "Power",
+    "Flower Power"
+  ],
+  "author": "Sandeep Mistry <sandeep.mistry@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sandeepmistry/node-flower-power/issues"
+  },
+  "devDependencies": {
+    "jshint": "~2.3.0",
+    "async": "~0.2.9",
+    "bleno": "~0.1.8"
+  },
+  "dependencies": {
+    "noble-device": "^1.1.0"
+  },
+  "homepage": "https://github.com/sandeepmistry/node-flower-power#readme"
 }
