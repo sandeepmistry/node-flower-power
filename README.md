@@ -1,4 +1,4 @@
-node-flower-power
+flower-power-ble
 =================
 
 [![Analytics](https://ga-beacon.appspot.com/UA-56089547-1/sandeepmistry/node-flower-power?pixel)](https://github.com/igrigorik/ga-beacon)
@@ -10,14 +10,14 @@ Install
 -------
 
 ```sh
-npm install flower-power
+npm install flower-power-ble
 ```
 
 Usage
 -----
 
 ```javascript
-var FlowerPower = require('flower-power');
+var FlowerPower = require('flower-power-ble');
 ```
 
 __Discover__
