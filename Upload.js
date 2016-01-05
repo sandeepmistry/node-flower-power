@@ -1,5 +1,17 @@
 var UploadBuffer = require('./UploadBuffer');
 
+var UPLOAD_SERVICE_UUID                     = '39e1fb0084a811e2afba0002a5d5c51b';
+var UPLOAD_TX_BUFFER_UUID                   = '39e1fb0184a811e2afba0002a5d5c51b';
+var UPLOAD_TX_STATUS_UUID                   = '39e1fb0284a811e2afba0002a5d5c51b';
+var UPLOAD_RX_STATUS_UUID                   = '39e1fb0384a811e2afba0002a5d5c51b';
+var HISTORY_SERVICE_UUID                    = '39e1fc0084a811e2afba0002a5d5c51b';
+var HISTORY_NB_ENTRIES_UUID                 = '39e1fc0184a811e2afba0002a5d5c51b';
+var HISTORY_LASTENTRY_IDX_UUID              = '39e1fc0284a811e2afba0002a5d5c51b';
+var HISTORY_TRANSFER_START_IDX_UUID         = '39e1fc0384a811e2afba0002a5d5c51b';
+var HISTORY_CURRENT_SESSION_ID_UUID         = '39e1fc0484a811e2afba0002a5d5c51b';
+var HISTORY_CURRENT_SESSION_START_IDX_UUID  = '39e1fc0584a811e2afba0002a5d5c51b';
+var HISTORY_CURRENT_SESSION_PERIOD_UUID     = '39e1fc0684a811e2afba0002a5d5c51b';
+
 function Upload(fp, callback) {
 	this.fp = fp;
 	this.buffers = [];

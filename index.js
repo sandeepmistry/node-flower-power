@@ -493,6 +493,8 @@ FlowerPower.prototype.ledOff = function(callback) {
 
 FlowerPower.prototype.updateFirmware = function(binaryFile, callback) {
 	var update = new Update(this, binaryFile, callback);
+
+	update.startUpdate(callback);
 };
 
 module.exports = FlowerPower;
