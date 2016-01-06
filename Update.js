@@ -47,7 +47,7 @@ Update.prototype.writeAFrame = function(index, buffer, callback) {
 
   frame.writeUInt16LE(index);
   buffer.copy(frame, 2);
-  console.log('(' + frame.readUInt16LE(0) + '/' + this.size + ' ' + Math.floor((index / this.size) * 100) + '%)', frame);
+  console.log('(' + (index + 1) + '/' + this.size + ' ' + Math.floor(((index + 1) / this.size) * 100) + '%)', frame);
   this.fp.writeDataCharacteristic(DOWNLOAD_SERVICE, OAD_IMAGE_BLOCK, frame, function(err) {
     callback(err);
   });
