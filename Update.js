@@ -1,7 +1,7 @@
 var fs = require('fs');
 var async = require('async');
 
-const LEN_FRAME = 15;
+const LEN_FRAME = 16;
 
 var DOWNLOAD_SERVICE                        = 'f000ffc004514000b000000000000000';
 var OAD_IMAGE_NOTIFIY                       = 'f000ffc104514000b000000000000000';
@@ -12,18 +12,16 @@ function Update(fp, binaryFile, callback) {
   this.file = binaryFile;
   this.fd;
   this.size = 0;
-  this.frame = [];
-  this.currentIndex = 0;
 
   return this;
 };
 
 Update.prototype.getHeader = function(callback) {
-  var buff = new Buffer(12);
+  var buff = new Buffer(8);
 
-  fs.read(this.fd, buff, 0, buff.length, 0, function(err, bytesRead, buffHeader) {
-    this.size = buffHeader.readUInt16LE(6);
-    this.fp.writeDataCharacteristic(DOWNLOAD_SERVICE, OAD_IMAGE_NOTIFIY, buffHeader.slice(4), function(err) {
+  fs.read(this.fd, buff, 0, buff.length, 4, function(err, bytesRead, buffHeader) {
+    this.size = buffHeader.readUInt16LE(2);
+    this.fp.writeDataCharacteristic(DOWNLOAD_SERVICE, OAD_IMAGE_NOTIFIY, buffHeader, function(err) {
       callback(err);
     }.bind(this));
   }.bind(this));
@@ -45,11 +43,11 @@ Update.prototype.readAFrame = function(index, callback) {
 };
 
 Update.prototype.writeAFrame = function(index, buffer, callback) {
-  var frame = new Buffer(18); // index + buffer;
+  var frame = new Buffer(2 + LEN_FRAME); // index + buffer;
 
   frame.writeUInt16LE(index);
   buffer.copy(frame, 2);
-  console.log('(' + index + '/' + this.size + ' ' + Math.floor((index / this.size) * 100) + '%)', frame);
+  console.log('(' + frame.readUInt16LE(0) + '/' + this.size + ' ' + Math.floor((index / this.size) * 100) + '%)', frame);
   this.fp.writeDataCharacteristic(DOWNLOAD_SERVICE, OAD_IMAGE_BLOCK, frame, function(err) {
     callback(err);
   });
@@ -61,20 +59,15 @@ Update.prototype.readAndWriteGroupFrame = function(index, callback) {
   async.whilst(
     function() {return nbFrame < 128}.bind(this),
     function(callback) {
-      if (nbFrame + index > this.size) {
-        callback(null, true);
-      }
-      else {
-        this.readAFrame(nbFrame + index, function(err, frame) {
-          if (err) callback(err);
-          else {
-            this.writeAFrame(nbFrame + index, frame, function(err) {
-              nbFrame++;
-              callback(err);
-            });
-          }
-        }.bind(this));
-      }
+      this.readAFrame(index + nbFrame, function(err, frame) {
+        if (err) callback(err);
+        else {
+          this.writeAFrame(index + nbFrame, frame, function(err) {
+            nbFrame++;
+            callback(err);
+          });
+        }
+      }.bind(this));
     }.bind(this),
     function(err, n) {
       callback(err);
@@ -84,7 +77,6 @@ Update.prototype.readAndWriteGroupFrame = function(index, callback) {
 
 Update.prototype.updateGroupFrame = function(callback) {
   this.getIndex(function(err, index) {
-    this.currentIndex = index;
     this.readAndWriteGroupFrame(index, function(err) {
       callback(err);
     }.bind(this));
@@ -93,7 +85,7 @@ Update.prototype.updateGroupFrame = function(callback) {
 
 Update.prototype.writeFrimware = function(callback) {
   async.whilst(
-    function() {return true}.bind(this),
+    function() {return true},
     function(callback) {
       this.updateGroupFrame(function(err) {
         callback(err);

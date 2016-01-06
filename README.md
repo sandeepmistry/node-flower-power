@@ -10,7 +10,7 @@ Install
 -------
 
 ```sh
-npm install flower-power-ble
+$ npm install flower-power-ble
 ```
 
 Usage
@@ -151,6 +151,16 @@ flowerPower.ledFade(callback(error));
 flowerPower.ledOff(callback(error));
 ```
 
+__History__
+```javascript
+flowerPower.getHistory(index, callback(error, history));
+```
+
+__Update firmware__
+```javascript
+flowerPower.updateFirmware(file.bin, callback(error));
+```
+
 Events
 ------
 
@@ -216,10 +226,6 @@ TODO
     * ~~temperature~~
     * ~~soil moisture~~
   * ~~read fertilizer~~
-  * read historic data
-    * sunlight
-    * temperature
-    * soil moisture
-    * fertizler
+  * ~~read historic data~~
+  * ~~update firmware~~
   * ~~__use calculations to convert values__ (currently using lookup table)~~
-
