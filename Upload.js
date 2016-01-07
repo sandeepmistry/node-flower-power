@@ -1,3 +1,4 @@
+var async = require('async');
 var UploadBuffer = require('./UploadBuffer');
 
 var UPLOAD_SERVICE_UUID                     = '39e1fb0084a811e2afba0002a5d5c51b';
