@@ -7,7 +7,7 @@ var DOWNLOAD_SERVICE                        = 'f000ffc004514000b000000000000000'
 var OAD_IMAGE_NOTIFIY                       = 'f000ffc104514000b000000000000000';
 var OAD_IMAGE_BLOCK                         = 'f000ffc204514000b000000000000000';
 
-function Update(fp, binaryFile, callback) {
+function Update(fp, binaryFile) {
   this.fp = fp;
   this.file = binaryFile;
   this.fd;
@@ -101,6 +101,10 @@ Update.prototype.startUpdate = function(callback) {
     callback(err);
   }.bind(this);
 
+  this.fp._peripheral.on('disconnect', function(err) {
+    return finishCallback(err);
+  });
+
   fs.open(this.file, 'r', function(err, fd) {
     if (err) return callback(err);
     this.fd = fd;
@@ -112,7 +116,7 @@ Update.prototype.startUpdate = function(callback) {
         this.writeFrimware(callback)
       }.bind(this)
     ], function(err) {
-      return callback(err);
+      return finishCallback(err);
     }.bind(this));
   }.bind(this));
 };
