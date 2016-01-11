@@ -27,10 +27,6 @@ var COLOR_UUID                              = '39e1fe0484a811e2afba0002a5d5c51b'
 var CLOCK_SERVICE_UUID                      = '39e1fd0084a811e2afba0002a5d5c51b';
 var CLOCK_CURRENT_TIME_UUID                 = '39e1fd0184a811e2afba0002a5d5c51b';
 
-var UPLOAD_SERVICE_UUID                     = '39e1fb0084a811e2afba0002a5d5c51b';
-var UPLOAD_TX_BUFFER_UUID                   = '39e1fb0184a811e2afba0002a5d5c51b';
-var UPLOAD_TX_STATUS_UUID                   = '39e1fb0284a811e2afba0002a5d5c51b';
-var UPLOAD_RX_STATUS_UUID                   = '39e1fb0384a811e2afba0002a5d5c51b';
 var HISTORY_SERVICE_UUID                    = '39e1fc0084a811e2afba0002a5d5c51b';
 var HISTORY_NB_ENTRIES_UUID                 = '39e1fc0184a811e2afba0002a5d5c51b';
 var HISTORY_LASTENTRY_IDX_UUID              = '39e1fc0284a811e2afba0002a5d5c51b';
